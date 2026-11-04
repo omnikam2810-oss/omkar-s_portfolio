@@ -41,7 +41,7 @@ export function Footer() {
 
         <Reveal
           aria-hidden="true"
-          className="mt-11 bg-[linear-gradient(180deg,var(--foot-line)_0%,var(--foot-line-2)_60%,var(--footer)_100%)] bg-clip-text text-center font-display text-[66px] leading-[0.85] font-semibold tracking-[-0.04em] whitespace-nowrap text-transparent lg:mt-18 lg:text-[clamp(84px,16.5vw,260px)] lg:leading-[0.82] lg:tracking-[-0.035em]"
+          className="mt-11 bg-[linear-gradient(180deg,var(--foot-line)_0%,var(--foot-line-2)_60%,var(--footer)_100%)] bg-clip-text text-center font-display text-[length:min(66px,calc((100vw-2rem)/5.95))] leading-[0.85] font-semibold tracking-[-0.04em] whitespace-nowrap text-transparent lg:mt-18 lg:text-[clamp(84px,16.5vw,260px)] lg:leading-[0.82] lg:tracking-[-0.035em]"
         >
           Omkar Nikam
         </Reveal>

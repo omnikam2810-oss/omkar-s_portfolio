@@ -82,7 +82,7 @@ export function Contact() {
     >
       {/* data-contact-card: the theme draws this block as a dark card (theme.css). */}
       <div data-contact-card className="mx-auto max-w-[1360px]">
-        <div className="grid gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-end">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-end">
           <Reveal className="flex flex-col gap-[22px] md:gap-8">
             <Eyebrow>Contact</Eyebrow>
             <RevealHeading
@@ -112,7 +112,7 @@ export function Contact() {
 
           <ul
             aria-label="Other ways to reach me"
-            className="m-0 flex list-none flex-col gap-3 p-0"
+            className="m-0 flex min-w-0 list-none flex-col gap-3 p-0"
           >
             {CHANNELS.map((channel, i) => (
               <li key={channel.label}>
