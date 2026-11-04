@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { IBM_Plex_Mono, Inter, Inter_Tight } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
 import { THEME_INIT_SCRIPT } from "@/components/layout/theme-toggle";
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-screen">
+        <JsonLd />
         {/* Without JS, scroll reveals would stay at their hidden start state. */}
         <noscript>
           <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-letter] .letter-word{opacity:1!important;filter:none!important}[data-letter] .letter-wipe{clip-path:none!important}`}</style>
