@@ -4,6 +4,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { PHOTOS, PRINCIPLES, type PhotoId } from "@/lib/about-story";
 import { letterHand, letterScript } from "@/lib/letter-fonts";
 import { LetterWriting } from "./letter-writing";
+import { InstagramIcon } from "@/components/ui/social-icons";
 import { SITE } from "@/lib/site";
 
 /** A photo, or, until you add one in public/about, a quiet warm plate that holds its place. */
@@ -490,7 +491,7 @@ function Finale() {
             <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
               <ButtonLink
                 href={`mailto:${SITE.email}`}
-                className="bg-bg! text-small text-ink! [--pill:2.25rem] hover:bg-accent! hover:text-on-accent!"
+                className="bg-bg! text-small text-btn! [--pill:2.25rem] hover:bg-accent! hover:text-on-accent!"
               >
                 Say hello
               </ButtonLink>
@@ -501,6 +502,16 @@ function Finale() {
               >
                 See my work
               </ButtonLink>
+              <a
+                href="https://www.instagram.com/omkarnikam__/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram: @omkarnikam__"
+                title="@omkarnikam__ on Instagram"
+                className="flex size-12 shrink-0 items-center justify-center rounded-full border border-white/30 text-bg/80 transition-[color,border-color,scale] duration-200 hover:border-accent-soft hover:text-accent-soft active:scale-[0.94]"
+              >
+                <InstagramIcon className="size-5" />
+              </a>
             </div>
           </div>
         </div>
