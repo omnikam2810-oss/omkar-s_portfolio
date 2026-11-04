@@ -1,0 +1,377 @@
+/* The colour theme: cool neutral greys, near-black ink and a deep teal accent, set in a tight grotesque.
+   Light by default; <html data-mode="dark"> switches to the dark version (see components/layout/theme-toggle.tsx).
+   Every component reads these tokens, so none of them needs to know which mode is active. */
+
+
+:root {
+  --spot: 5.5%; /* strength of the light that follows the cursor on cards */
+  --ff-display: var(--font-inter-tight), system-ui, sans-serif;
+  --ff-sans: var(--font-inter), system-ui, sans-serif;
+  --btn-glow: rgba(15, 118, 110, 0.45);
+  --pv-accent: #4fc3bb;
+  --pv-accent-2: #14918a;
+  --pv-accent-deep: #0f766e;
+  --pv-accent-soft: #9be0da;
+  --pv-tint-a: #e4f3f1;
+  --pv-tint-b: #c9e6e2;
+  --pv-tint-c: #a8d8d2;
+  --pv-tint-d: #8fcbc4;
+  --pv-tint-line: #bfe0db;
+
+  /* text */
+  --ink: #18181b;
+  --text: #3f3f46;
+  --body: #5b5b66;
+  --body-2: #5f5f69;
+  --soft: #6b6b75;
+  --muted: #62626c;
+  --muted-2: #656570;
+  --muted-b: #62626c;
+  --muted-3: #787883;
+  --faint: #6c6c76;
+
+  /* accent */
+  --accent: #0f766e;
+  --accent-2: #14918a;
+  --accent-soft: #5ec8c0;
+  --accent-hover: #0a5c56;
+  --accent-tint: #dcefed;
+  --code-str: #3f6f6a;
+  --ok: #1f9d6b;
+  --warn: #8a5508;
+
+  /* surfaces */
+  --bg: #f6f6f6;
+  --bg-alt: #efefef;
+  --surface: #ffffff;
+  --panel: #fafafa;
+  --kbd: #ececee;
+  --btn: #18181b;
+  --footer: #18181b;
+  --nav-bg: rgba(250, 250, 250, 0.78);
+  --band: #ececee;
+  --band-line: #dedee2;
+  --cmd-hover: #eef6f5;
+
+  /* hairlines */
+  --line: #e4e4e7;
+  --line-panel: #e9e9ec;
+  --line-inner: #ececef;
+  --line-section: #e6e6e9;
+  --line-strong: #dcdce0;
+  --line-3: #dcdce0;
+  --line-4: #d9d9de;
+  --line-5: #cfcfd5;
+  --line-6: #c4c4cb;
+  --card-line-hover: #cfd8d7;
+
+  /* the dark footer */
+  --foot-text: #d4d4d8;
+  --foot-muted: #8a8a94;
+  --foot-line: #34343a;
+  --foot-line-2: #26262b;
+  --foot-accent: #4fc3bb;
+
+  /* one-off states */
+  --quote: #a7d8d3;
+  --hl-hover: #f9f9f9;
+  --ach-num: #b0b0b8;
+  --jdot-ring: #c4c4cb;
+  --pl-top: #ffffff;
+  --pl-on-border: #a8d3cf;
+
+  /* shadows, neutral instead of brown */
+  --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 10px 28px -10px rgba(24, 24, 27, 0.14), 0 1px 2px rgba(24, 24, 27, 0.05);
+  --card-shadow-rest: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(24, 24, 27, 0.04), 0 10px 28px -16px rgba(24, 24, 27, 0.12);
+  --card-shadow-hover: 0 1px 2px rgba(24, 24, 27, 0.04), 0 18px 48px rgba(24, 24, 27, 0.08);
+  --pop-shadow: 0 12px 30px rgba(24, 24, 27, 0.08);
+  --stack-shadow: 0 -14px 36px rgba(24, 24, 27, 0.09);
+  --dialog-shadow: 0 24px 60px rgba(24, 24, 27, 0.2);
+
+  /* stack diagram */
+  --sd-face-l: #ececee;
+  --sd-face-r-a: #cfe6e3;
+  --sd-face-r-b: #2f9b93;
+  --sd-face-r: #7cc2bb;
+  --sd-top: #fbfbfb;
+  --sd-top-hot: #eef8f7;
+  --sd-top-line: #dcdce0;
+  --sd-grid: #ececef;
+  --sd-wire: #a6b8b6;
+  --sd-chip: #ffffff;
+  --sd-chip-line: #bfc9c8;
+  --sd-chip-text: #5f5f69;
+  --sd-tag: #a8a8b0;
+  --sd-zone: #e6f3f1;
+  --sd-zone-line: #5fb2aa;
+  --sd-note: #82828c;
+  --sd-note-2: #9a9aa3;
+  --sd-ai-chip: #d8eeeb;
+  --sd-rail: #d0d0d6;
+  --sd-rail-compact: #e2e2e6;
+}
+
+/* Headlines: tighter, medium weight, and the emphasised words are the quiet grey second half of the
+   line (not italic) as in the reference design. */
+:root :is(h1, h2, h3) {
+  letter-spacing: -0.035em;
+}
+:root :is(h1, h2) em {
+  font-style: normal;
+  color: var(--soft);
+  text-decoration: none;
+}
+/* the paper grain is off in this cool theme */
+:root .grain {
+  display: none;
+}
+
+/* links in running text slide in a teal underline */
+:root article p a {
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+/* text selection */
+:root ::selection {
+  background: var(--accent-tint);
+  color: var(--ink);
+}
+
+/* A soft teal haze behind the hero headline, with faint rings fanning out of it, as in the reference.
+   It sits under everything (the particles and the content are drawn after it) and fades out at the bottom. */
+:root section#top::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 38% 34%, rgba(20, 145, 138, 0.11) 0%, rgba(20, 145, 138, 0.04) 45%, transparent 75%),
+    radial-gradient(40% 40% at 78% 22%, rgba(94, 200, 192, 0.07) 0%, transparent 70%),
+    repeating-radial-gradient(circle at 38% 34%, transparent 0 140px, rgba(15, 118, 110, 0.03) 141px 142px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+
+/* The contact block as a large dark card with a teal call to action. Inside it the text and surface tokens
+   are remapped to their dark-on-light counterparts, so the components inside need no theme-specific classes. */
+:root [data-contact-card] {
+  --ink: #fafafa;
+  --text: #d4d4d8;
+  --soft: #a1a1aa;
+  --body: #a1a1aa;
+  --body-2: #a1a1aa;
+  --muted: #a1a1aa;
+  --muted-2: #8e8e98;
+  --accent: #4fc3bb;
+  --accent-hover: #7ddad3;
+  --accent-tint: rgba(79, 195, 187, 0.14);
+  --surface: #222226;
+  --line: #34343a;
+  --line-3: #3f3f46;
+  --line-strong: #3f3f46;
+  --card-line-hover: #4a4a52;
+  --bg: #ffffff;
+  --btn: #0f766e;
+  --on-accent: #0b1514;
+  --card-shadow-rest: none;
+  --card-shadow-hover: 0 18px 44px -10px rgba(0, 0, 0, 0.5);
+  background: #18181b;
+  border-radius: 36px;
+  padding: 2.5rem 1.5rem;
+  color: var(--text);
+}
+@media (min-width: 768px) {
+  :root [data-contact-card] {
+    padding: 4.5rem 4rem;
+  }
+}
+:root #contact {
+  padding-top: 5rem;
+  padding-bottom: 6rem;
+}
+@media (min-width: 768px) {
+  :root #contact {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* Primary calls to action are teal; the buttons in the navbar (Résumé) keep the dark colour and the ones in
+   the dark contact card are already teal, so one dark and one teal button can sit on a screen as in the
+   reference. */
+:root [data-variant="primary"] {
+  background-color: var(--accent);
+}
+:root [data-variant="primary"]:hover {
+  background-color: var(--accent-hover);
+}
+:root header [data-variant="primary"] {
+  background-color: var(--btn);
+}
+:root header [data-variant="primary"]:hover {
+  background-color: var(--accent);
+}
+:root [data-contact-card] [data-variant="primary"] {
+  background-color: var(--btn);
+}
+:root [data-contact-card] [data-variant="primary"]:hover {
+  background-color: var(--accent);
+}
+
+/* The label dot before each section eyebrow: a round teal dot in a soft halo, as in the reference. */
+:root [data-eyebrow-dot] {
+  border-radius: 9999px;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--accent) 7%, transparent);
+  margin-right: 0.2rem;
+}
+
+
+/* ---------------------------------------------------------------------------------------------------------
+   The dark version of the theme: <html data-mode="dark">. It keeps every rule
+   above (fonts, haze, buttons, dots) and only swaps the colours for night ones. The buttons made with the
+   --btn token flip too (a light button with dark text), which is why the dark boxes below remap it locally.
+   --------------------------------------------------------------------------------------------------------- */
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+
+  --btn-glow: rgba(79, 195, 187, 0.4);
+  --spot: 9%;
+
+  /* text */
+  --ink: #f4f4f5;
+  --text: #d4d4d8;
+  --body: #a8a8b2;
+  --body-2: #a8a8b2;
+  --soft: #8c8c97;
+  --muted: #9c9ca6;
+  --muted-2: #92929c;
+  --muted-b: #9c9ca6;
+  --muted-3: #7e7e88;
+  --faint: #8a8a94;
+
+  /* accent */
+  --accent: #4fc3bb;
+  --accent-2: #2fb3aa;
+  --accent-soft: #7ddad3;
+  --accent-hover: #7ddad3;
+  --accent-tint: rgba(79, 195, 187, 0.14);
+  --on-accent: #08110f;
+  --code-str: #8fd8d1;
+  --ok: #34d399;
+  --warn: #e0a63a;
+
+  /* surfaces */
+  --bg: #0d0e10;
+  --bg-alt: #121316;
+  --surface: #17181b;
+  --panel: #14151a;
+  --kbd: #1f2125;
+  --btn: #ececee;
+  --footer: #08090a;
+  --nav-bg: rgba(16, 17, 19, 0.8);
+  --band: #121316;
+  --band-line: #1f2125;
+  --cmd-hover: rgba(79, 195, 187, 0.1);
+
+  /* hairlines */
+  --line: #26282c;
+  --line-panel: #202226;
+  --line-inner: #1d1f22;
+  --line-section: #202226;
+  --line-strong: #2f3237;
+  --line-3: #2f3237;
+  --line-4: #34373c;
+  --line-5: #3d4046;
+  --line-6: #464a50;
+  --card-line-hover: #35625e;
+
+  /* the footer */
+  --foot-text: #d4d4d8;
+  --foot-muted: #8a8a94;
+  --foot-line: #26282c;
+  --foot-line-2: #1a1c1f;
+  --foot-accent: #4fc3bb;
+
+  /* one-off states */
+  --quote: #a7d8d3;
+  --hl-hover: #1b1d21;
+  --ach-num: #5a5d64;
+  --jdot-ring: #4a4d54;
+  --pl-top: #1b1d21;
+  --pl-on-border: #2f6b66;
+
+  /* shadows */
+  --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 28px -10px rgba(0, 0, 0, 0.7), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --card-shadow-rest: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px -16px rgba(0, 0, 0, 0.7);
+  --card-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 48px rgba(0, 0, 0, 0.55);
+  --pop-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  --stack-shadow: 0 -14px 36px rgba(0, 0, 0, 0.5);
+  --dialog-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+
+  /* the mock-ups in the project cards keep their own look, softened a little */
+  --pv-tint-a: #1f3a38;
+  --pv-tint-b: #1c312f;
+  --pv-tint-c: #2a4a47;
+  --pv-tint-d: #3a6a66;
+  --pv-tint-line: #2d5a56;
+
+  /* stack diagram */
+  --sd-face-l: #1f2226;
+  --sd-face-r-a: #1d4a47;
+  --sd-face-r-b: #14918a;
+  --sd-face-r: #2a6e69;
+  --sd-top: #181a1d;
+  --sd-top-hot: #17302e;
+  --sd-top-line: #33373d;
+  --sd-grid: #1f2226;
+  --sd-wire: #3c6560;
+  --sd-chip: #1b1d20;
+  --sd-chip-line: #3a3e44;
+  --sd-chip-text: #b0b0b8;
+  --sd-tag: #7a7a84;
+  --sd-zone: #17302e;
+  --sd-zone-line: #2f8f88;
+  --sd-note: #8a8a94;
+  --sd-note-2: #70707a;
+  --sd-ai-chip: #1d3a38;
+  --sd-rail: #33373d;
+  --sd-rail-compact: #26292e;
+}
+
+/* In the dark theme the hero has a plain background: no teal haze and no rings behind the headline. */
+:root[data-mode="dark"] section#top::before {
+  content: none;
+}
+
+/* the navbar's resume button: light, as the rest of the --btn buttons are */
+:root[data-mode="dark"] header [data-variant="primary"] {
+  background-color: var(--btn);
+  color: var(--bg);
+}
+:root[data-mode="dark"] header [data-variant="primary"]:hover {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* blocks that are dark on a light page stay dark on a dark page: a raised dark slab with a hairline */
+:root[data-mode="dark"] [data-dark-box],
+:root[data-mode="dark"] [data-contact-card] {
+  --btn: #1a1c20;
+  --bg: #fafafa;
+  background-color: #17191c;
+  box-shadow: inset 0 0 0 1px #26282c;
+}
+:root[data-mode="dark"] [data-contact-card] {
+  --btn: #0f766e;
+}
+:root[data-mode="dark"] [data-dark-box] [data-variant="primary"] {
+  background-color: #fafafa;
+}
+
+/* paper and photos keep their own colours; take the edge off the white page grain in the dark */
+:root[data-mode="dark"] .letter-drop {
+  filter: drop-shadow(0 0.9rem 1rem rgba(0, 0, 0, 0.8));
+}

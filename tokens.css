@@ -1,0 +1,26 @@
+/* Omkar Nikam portfolio: design tokens that don't change with the colour mode.
+   Colours live in src/styles/theme.css (light by default, dark with <html data-mode="dark">). */
+
+:root {
+  --on-accent: #FFFFFF;    /* text on an accent-filled (hovered) button */
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.35s;
+  --dur: 0.6s;
+  --dur-slow: 1.2s;
+
+  /* radius */
+  --r-card: 20px;
+  --r-ui: 12px;
+  --r-tag: 6px;
+}
+
+
+/* Type scale: six steps only
+   display   clamp(48px, 5.6vw, 80px)  Inter Tight, 500, -0.022em   (hero + contact)
+   section   clamp(36px, 4vw, 56px)    Inter Tight, 500, -0.015em   (section titles)
+   title     28px                      Inter Tight, 600             (card / project titles)
+   body      17px / 1.75               Inter                        (paragraphs)
+   small     14px                      Inter                        (nav, buttons, secondary)
+   label     11px / 0.2em tracking     IBM Plex Mono, uppercase     (eyebrows, tags)          */

@@ -1,0 +1,289 @@
+@import "tailwindcss";
+@import "../../tokens.css";
+@import "../styles/theme.css";
+@import "../styles/stack-diagram.css";
+@import "../styles/case-study.css";
+@import "../styles/app-screens.css";
+@import "lenis/dist/lenis.css";
+
+@theme inline {
+  /* text */
+  --color-ink: var(--ink);
+  --color-text: var(--text);
+  --color-body: var(--body);
+  --color-body-2: var(--body-2);
+  --color-soft: var(--soft);
+  --color-muted: var(--muted);
+  --color-muted-b: var(--muted-b);
+  --color-muted-2: var(--muted-2);
+  --color-muted-3: var(--muted-3);
+  --color-faint: var(--faint);
+
+  /* accent */
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-tint: var(--accent-tint);
+  --color-warn: var(--warn);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-code-str: var(--code-str);
+  --color-ok: var(--ok);
+
+  /* surfaces */
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-kbd: var(--kbd);
+  --color-btn: var(--btn);
+  --color-footer: var(--footer);
+  --color-nav-bg: var(--nav-bg);
+
+  /* hairlines */
+  --color-line: var(--line);
+  --color-line-panel: var(--line-panel);
+  --color-line-inner: var(--line-inner);
+  --color-line-section: var(--line-section);
+  --color-line-strong: var(--line-strong);
+  --color-line-3: var(--line-3);
+  --color-line-4: var(--line-4);
+  --color-line-5: var(--line-5);
+  --color-line-6: var(--line-6);
+  --color-card-line-hover: var(--card-line-hover);
+
+  /* one-off states */
+  --color-quote: var(--quote);
+  --color-hl-hover: var(--hl-hover);
+  --color-ach-num: var(--ach-num);
+  --color-jdot-ring: var(--jdot-ring);
+  --color-pl-on-border: var(--pl-on-border);
+  --color-cmd-hover: var(--cmd-hover);
+  --color-band: var(--band);
+  --color-band-line: var(--band-line);
+
+  /* footer */
+  --color-foot-text: var(--foot-text);
+  --color-foot-muted: var(--foot-muted);
+  --color-foot-line: var(--foot-line);
+  --color-foot-accent: var(--foot-accent);
+
+  /* fonts (next/font variables are set on <html>) */
+  --font-display: var(--ff-display);
+  --font-sans: var(--ff-sans);
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* the six text sizes */
+  --text-display: clamp(48px, 5.6vw, 80px);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.022em;
+  --text-display--font-weight: 500;
+  --text-section: clamp(36px, 4vw, 56px);
+  --text-section--line-height: 1.1;
+  --text-section--letter-spacing: -0.015em;
+  --text-section--font-weight: 500;
+  --text-title: 28px;
+  --text-title--line-height: 1.25;
+  --text-title--font-weight: 600;
+  --text-copy: 17px;
+  --text-copy--line-height: 1.75;
+  --text-small: 14px;
+  --text-small--line-height: 1.5;
+  --text-label: 11px;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.2em;
+
+  --radius-card: var(--r-card);
+  --radius-ui: var(--r-ui);
+  --radius-tag: var(--r-tag);
+
+  --ease-brand: var(--ease);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    /* thin scrollbar (Firefox); the WebKit one is below */
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--ff-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Typographic polish: balanced headlines, and paragraphs that avoid a lonely last word. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
+
+  /* One focus ring everywhere. It follows each element's own corners (no forced radius, which used
+     to square off round buttons), and sits a little clear of the edge. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border: 2px solid var(--bg);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--faint);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+/* Eyebrows and tags: mono, uppercase, 11px / 0.2em */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ---- entrance (hero) ---- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lineup {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+@keyframes avail {
+  0% { box-shadow: 0 0 0 0 rgba(62, 142, 90, 0.45); }
+  70%, 100% { box-shadow: 0 0 0 7px rgba(62, 142, 90, 0); }
+}
+
+/* the dot travelling along each "How I build" connector */
+@keyframes hop {
+  0% { left: 6px; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: calc(100% - 12px); opacity: 0; }
+}
+
+.rise { animation: rise 1.3s var(--ease) both; }
+.hop { animation: hop 1.8s cubic-bezier(0.45, 0, 0.35, 1) infinite; }
+.lineup { display: block; animation: lineup 1.1s var(--ease) both; }
+.avail { animation: avail 2.2s ease-out infinite; }
+
+/* ---- paper grain ---- */
+.grain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 45;
+  /* The strength (7%) is baked into the tile's alpha, so there's no
+     mix-blend-mode: blending a full-screen layer was what kept the page blank on slower devices. */
+  background-image: url("/grain.png");
+  background-size: 160px 160px;
+}
+/* ---- a terminal's blinking cursor (about page) ---- */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.cursor-blink { animation: blink 1.1s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink { animation: none; }
+}
+
+/* ---- image placeholder: a soft sheen that sweeps across while a screenshot loads (ui/fade-image.tsx) ---- */
+
+/* ---- buttons: arrow slides 4px on hover ---- */
+.arrow {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+a:hover .arrow,
+button:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* The circle at the end of a primary button (ui/button-link.tsx). It turns white with an accent-coloured arrow
+   as the button takes the accent colour. Size it with --pill on the button. */
+.pill-arrow {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--pill, 2rem);
+  height: var(--pill, 2rem);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 1rem;
+  line-height: 1;
+  transition:
+    background-color 0.35s var(--ease),
+    color 0.35s var(--ease);
+}
+a:hover .pill-arrow {
+  background: #fff;
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .lineup,
+  .avail,
+  .hop {
+    animation: none !important;
+  }
+  .arrow {
+    transition: none;
+  }
+}
+
+/* Soft section rules: a thin line that fades out at both ends instead of a hard hairline from edge to edge.
+   Use rule-top / rule-bottom on a section; set --rule to change the line colour. */
+@utility rule-top {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0, var(--rule, var(--band-line)) 16%, var(--rule, var(--band-line)) 84%, transparent 100%);
+  }
+}
+@utility rule-bottom {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0, var(--rule, var(--band-line)) 16%, var(--rule, var(--band-line)) 84%, transparent 100%);
+  }
+}

@@ -1,0 +1,101 @@
+---
+title: FitTrack
+slug: fittrack
+caseNumber: "03"
+tagline: A mobile-first way to log workouts and stay consistent.
+role: Full-stack & mobile developer
+stack: React Native (Expo) · Node/Express · MongoDB · Cloudinary
+timeline: Ongoing
+status: In progress
+liveUrl: ""                   # empty hides the Live button; add an Expo/store link later
+repoUrl: https://github.com/omnikam2810-oss/FitForge
+heroCaption: "Logging a workout, and tracking progress over time."
+next:
+  title: DevTrace
+  slug: devtrace
+  blurb: A self-hosted observability platform for metrics, logs, traces and incidents.
+---
+
+<Section number="01" eyebrow="The problem" title="Consistency needs *a good log.*" visual={<ScatterToHub hub="FitTrack" pills={["Notes app","Spreadsheets","Paywalled apps","Memory","Photos","Chat logs"]} />}>
+
+FitTrack is for people who want to record their workouts and keep a consistent routine. Staying consistent starts with tracking, and tracking has to be quick enough to do between sets on a phone.
+
+The goal is a mobile-friendly experience for fitness tracking, backed by a real API and database so that data stays reliable and in sync.
+
+</Section>
+
+<Section number="02" eyebrow="What I built" title="A gym log, *in your pocket.*">
+
+<ModuleCard name="Mobile app" icon="dumbbell">
+Built with React Native and Expo, so most of the code is shared across platforms.
+
+- Log a workout as exercises and sets, with weight, reps and a completed tick for each set
+- Totals for volume, sets and muscle groups are worked out for you when a workout is saved
+- A numeric keypad made for entering sets quickly
+- An exercise library, training programs and body measurements
+- A community feed, plus an onboarding flow for new users
+</ModuleCard>
+
+<ModuleCard name="Backend & media" icon="image">
+A Node/Express API with MongoDB for data, and Cloudinary for media storage.
+
+- REST API for app data
+- MongoDB for users and workouts
+- Cloudinary for images
+</ModuleCard>
+
+</Section>
+
+<Section number="03" eyebrow="Architecture" title="Mobile front, *containerised back.*">
+
+The Expo app talks to an Express API over REST. The API and MongoDB run in Docker, and media goes to Cloudinary so the API stays light.
+
+<SystemDiagram
+  nodes={[
+    { id: "app", col: 0, row: 0, tag: "Client · Expo", title: "React Native app", sub: "Android and iOS from one codebase" },
+    { id: "api", col: 1, row: 0, tag: "Server", title: "Express API", sub: "REST routes, env config, uploads", accent: true },
+    { id: "mongo", col: 2, row: 0, tag: "Data", title: "MongoDB", sub: "Users and workouts" },
+    { id: "cloud", col: 2, row: 1, tag: "Media", title: "Cloudinary", sub: "Images; the API stores references" },
+  ]}
+  edges={[
+    { from: "app", to: "api", label: "REST" },
+    { from: "app", to: "api", label: "JSON", kind: "back" },
+    { from: "api", to: "mongo", label: "R / W" },
+    { from: "api", to: "cloud", label: "UPLOAD" },
+  ]}
+  groups={[{ label: "Docker network", nodes: ["api", "mongo"] }]}
+/>
+
+</Section>
+
+<Section number="04" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+
+<Decision n="i." title="One codebase, two platforms">
+React Native with Expo shares most of the code between Android and iOS, and Expo Go makes testing on a real phone fast during development.
+</Decision>
+
+<Decision n="ii." title="Free for everyone">
+I removed the premium tier and payments so every feature is free to use.
+</Decision>
+
+<Decision n="iii." title="Media off the server">
+Images go to Cloudinary, so the API and database only store references.
+</Decision>
+
+</Section>
+
+<HardestPart quote="Inside Docker, *localhost* isn't where you think it is.">
+
+Inside a container, `localhost` points at that container itself, not at the MongoDB container next to it. I fixed the connection by treating the database as a service on a shared network:
+
+1. Run the API and MongoDB on the same Docker network
+2. Connect by service name, e.g. `mongodb://mongodb:27017/fittrack`, instead of `localhost`
+3. Keep the connection string in environment variables, so each environment gets the right value
+
+</HardestPart>
+
+<Learnings>
+- **Cross-platform mobile:** using React Native and Expo to share most of the code across platforms.
+- **End-to-end data flow:** wiring the app, API and database carefully so data moves reliably.
+- **Environment configuration:** how database connections, environment variables and container networking change behaviour between environments.
+</Learnings>

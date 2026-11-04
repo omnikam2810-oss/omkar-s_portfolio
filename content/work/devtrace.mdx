@@ -1,0 +1,153 @@
+---
+title: DevTrace
+slug: devtrace
+caseNumber: "04"
+tagline: See how your applications behave, and why they break.
+role: Full-stack developer
+stack: Express · PostgreSQL · Redis · React 19 · Socket.IO
+timeline: ""                  # optional: add a duration; empty hides it
+status: Working end to end
+liveUrl: ""                   # empty hides the Live button; add a demo link when there is one
+repoUrl: https://github.com/omnikam2810-oss/DevTrace
+heroCaption: "The console: services, health and an open incident in one view."
+next:
+  title: DesignSync
+  slug: designsync
+  blurb: One place to collaborate on design projects, and to learn system design.
+---
+
+<Section number="01" eyebrow="The problem" title="Something broke, *and the clues are everywhere.*" visual={<ScatterToHub hub="DevTrace" pills={["Metrics","Logs","Traces","Deploys","Alerts","Dashboards"]} />}>
+
+When a service slows down, the evidence is split across tools: metrics in one place, logs in another, traces somewhere else, and nobody remembers which release shipped when. The engineer on call spends the first half hour just collecting it.
+
+DevTrace is a self-hosted observability platform, in the same space as Datadog, New Relic and Sentry. You connect your applications to it, and it shows how they are behaving and why they break, in one console.
+
+</Section>
+
+<Section number="02" eyebrow="What I built" title="From the agent to *the incident.*">
+
+<ModuleCard name="Telemetry" icon="chart">
+What your services report, and how you explore it.
+
+- A Node.js SDK, `@devtrace/agent-node`, that you drop into a service
+- Metrics, logs, traces, heartbeats and service dependencies
+- A log explorer, a waterfall trace viewer, dashboards and a service map
+- Live updates in the console over Socket.IO
+</ModuleCard>
+
+<ModuleCard name="Alerts and incidents" icon="spark">
+What happens when something goes wrong.
+
+- Alert rules, such as "latency over 800 ms for 5 minutes"
+- Incidents opened automatically, each with a timeline
+- Gemini-assisted root-cause suggestions, drafted from the incident evidence
+- Deployments shown beside the incident, to spot a bad release
+</ModuleCard>
+
+<ModuleCard name="Teams and reports" icon="shield">
+Who can see what, and what gets reviewed.
+
+- Multi-tenant organizations with roles, API keys and audit logs
+- Reports as PDF, Excel, CSV or JSON, on a daily, weekly or monthly schedule
+</ModuleCard>
+
+</Section>
+
+<Section number="03" eyebrow="Architecture" title="Acknowledge fast, *process in the background.*">
+
+An application sends its telemetry in batches. The ingest API checks the batch and puts it on a Redis queue, then replies `202` straight away. BullMQ workers pick it up and write it to PostgreSQL through Prisma, evaluate the alert rules, and push live updates to the console over Socket.IO.
+
+<SystemDiagram
+  nodes={[
+    { id: "agent", col: 0, row: 1, tag: "Your service", title: "Agent SDK", sub: "@devtrace/agent-node" },
+    { id: "ingest", col: 1, row: 1, tag: "Server · Express", title: "Ingest API", sub: "API key, validate, enqueue", accent: true },
+    { id: "redis", col: 2, row: 1, tag: "Queue", title: "Redis", sub: "BullMQ queues" },
+    { id: "workers", col: 3, row: 1, tag: "Server", title: "Workers", sub: "Process each batch" },
+    { id: "pg", col: 4, row: 0, tag: "Data", title: "PostgreSQL", sub: "Prisma, monthly partitions" },
+    { id: "alerts", col: 4, row: 1, tag: "Rules", title: "Alerts to incidents", sub: "Gemini root-cause hints" },
+    { id: "live", col: 4, row: 2, tag: "Live", title: "Socket.IO to console", sub: "React 19 and Vite" },
+  ]}
+  edges={[
+    { from: "agent", to: "ingest", label: "BATCH" },
+    { from: "agent", to: "ingest", label: "202", kind: "back" },
+    { from: "ingest", to: "redis", label: "QUEUE" },
+    { from: "redis", to: "workers", label: "JOBS" },
+    { from: "workers", to: "pg", label: "WRITE" },
+    { from: "workers", to: "alerts", label: "RULES" },
+    { from: "workers", to: "live", label: "PUSH" },
+  ]}
+/>
+
+</Section>
+
+<Section number="04" eyebrow="In practice" title="A checkout that *slows down.*">
+
+A company runs `checkout-api` and `payments-api`. On Friday evening, customers report slow checkouts. This is how DevTrace takes the on-call engineer from the first alert to a fix.
+
+1. **Detection.** The agent in `checkout-api` has been sending metrics every few seconds. An alert rule ("latency over 800 ms for 5 minutes") fires, and an incident opens on its own.
+2. **Triage.** In the console, `checkout-api` shows as degraded. The service map draws its edge to `payments-api` in red, with a 6% error rate.
+3. **Root cause.** In the trace waterfall, most of each slow request is a single span: a database call inside `payments-api`. Filtering the logs by that trace ID shows connection-pool timeout errors.
+4. **Correlation.** The Deployments page shows `payments-api` v2.4.1 shipped 20 minutes before the alert, which points at the release.
+5. **Resolution.** They roll back, health scores recover, and the incident is closed with a root cause and notes. The Gemini analysis can draft that summary from the evidence.
+6. **Follow-up.** On Monday the weekly PDF report lists the incident and the service's health trend, so the team can review it.
+
+</Section>
+
+<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+
+<Decision n="i." title="A queue between ingest and storage">
+Telemetry arrives in bursts, and the worst burst comes during an outage. The API only validates and enqueues a batch, then acknowledges it, and workers do the slow work. In a load test the platform sustained about 6,000 items per second with a p95 latency of 113 ms.
+
+```ts
+router.use(ingestRateLimit);
+router.use(requireIngestKey);
+
+router.post("/metrics", asyncHandler(async (req, res) => {
+  const payload = metricsBatchSchema.parse(req.body);
+  await queues.metrics.add(payload.batchId, { ...payload, context: req.ingest! }, {
+    ...jobOptions, // 5 attempts, exponential backoff
+    jobId: `metrics:${req.ingest!.projectId}:${payload.batchId}`
+  });
+  res.status(202).json({ accepted: payload.metrics.length });
+}));
+```
+</Decision>
+
+<Decision n="ii." title="Partitions and retention, not bulk deletes">
+Metrics and logs from busy services grow fast. Monthly partitions keep queries quick, and retention jobs drop old partitions instead of running slow bulk deletes.
+</Decision>
+
+<Decision n="iii." title="The AI suggests, the evidence decides">
+Gemini drafts root-cause suggestions and incident summaries, but only from the incident's own evidence: the traces, logs and deployments already attached to it. An engineer reviews it before anything is closed.
+</Decision>
+
+</Section>
+
+<HardestPart quote="Staying up while *everything else is on fire.*">
+
+An observability platform gets its biggest traffic exactly when its customers are having an outage. So I designed for that moment first:
+
+1. Accept a batch quickly and hand it to a queue, so a burst never blocks the API
+2. Process the queue in the background, so a slow database never slows ingest
+3. Prove it with end-to-end and load tests, so an outage-sized burst is something I have already measured
+
+</HardestPart>
+
+<Section number="06" eyebrow="Where it stands" title="What works, *and what's next.*">
+
+**Done:** the platform works end to end, and lint, build and all tests pass.
+
+**Next:**
+
+- Partition spans and traces, as metrics and logs already are
+- Add hourly rollups for long-range charts
+- Add browser-level end-to-end tests
+- Run it under real production traffic, which it hasn't seen yet
+
+</Section>
+
+<Learnings>
+- **Queues decouple:** a fast acknowledgement and background workers keep a system responsive when load spikes.
+- **Time-series data needs a plan early:** partitioning and retention are far easier to design in than to add once the tables are huge.
+- **Observability is correlation:** a metric, a trace, a log line and a deploy time only explain a failure when they sit side by side.
+</Learnings>

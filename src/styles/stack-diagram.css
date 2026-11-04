@@ -1,0 +1,100 @@
+/* The request flowing through the 4 layers: one 4.8s loop, every part shares it.
+   Each layer offsets the loop with its own --d. Pure CSS, no JS.
+   Used by components/hero/stack-diagram.tsx; classes are prefixed sd-. */
+
+/* ---- desktop ---- */
+@keyframes travel {
+  0% { transform: translateY(-40px); opacity: 0; }
+  6% { opacity: 1; }
+  75% { transform: translateY(540px); opacity: 1; }
+  84%, 100% { transform: translateY(560px); opacity: 0; }
+}
+@keyframes lift {
+  0%, 22%, 100% { transform: translateY(0); }
+  8% { transform: translateY(-10px); }
+}
+@keyframes dotp {
+  0%, 22%, 100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+  8% { transform: scale(1.5); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-2) 15%, transparent); }
+}
+@keyframes drop {
+  from { opacity: 0; transform: translateY(-36px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- compact (phone scale) ---- */
+@keyframes travelM {
+  0% { transform: translateY(-30px); opacity: 0; }
+  6% { opacity: 1; }
+  75% { transform: translateY(330px); opacity: 1; }
+  84%, 100% { transform: translateY(345px); opacity: 0; }
+}
+@keyframes liftM {
+  0%, 22%, 100% { transform: translateY(0); }
+  8% { transform: translateY(-6px); }
+}
+@keyframes dropM {
+  from { opacity: 0; transform: translateY(-24px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- shared ---- */
+@keyframes glow {
+  0%, 22%, 100% { stroke: var(--sd-top-line); fill: var(--sd-top); }
+  8% { stroke: var(--accent); fill: var(--sd-top-hot); }
+}
+@keyframes ink {
+  0%, 22%, 100% { color: var(--ink); }
+  8% { color: var(--accent); }
+}
+@keyframes dash {
+  to { stroke-dashoffset: -16; }
+}
+
+.sd-packet { animation: travel 4.8s cubic-bezier(0.45, 0, 0.35, 1) infinite; }
+.sd-packetCompact { animation: travelM 4.8s cubic-bezier(0.45, 0, 0.35, 1) infinite; }
+
+.sd-flow { animation: lift 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; animation-delay: var(--d); }
+.sd-flowCompact { animation: liftM 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; animation-delay: var(--d); }
+
+.sd-flow .sd-top,
+.sd-flowCompact .sd-top { animation: glow 4.8s ease infinite; animation-delay: var(--d); }
+
+.sd-ink { animation: ink 4.8s ease infinite; animation-delay: var(--d); }
+
+.sd-dotp { animation: dotp 4.8s ease infinite; animation-delay: var(--d); }
+
+.sd-flowline { animation: dash 1.2s linear infinite; }
+
+/* first load: slabs drop in one after another */
+.sd-drop { animation: drop 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.sd-dropCompact { animation: dropM 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* the detail card a layer opens */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: none; }
+}
+.sd-card { animation: cardIn 0.25s ease-out both; }
+
+/* While a card is open the travelling packet and the centre line hold still. */
+.sd-paused .sd-packet,
+.sd-paused .sd-flowline { animation-play-state: paused; }
+
+/* Reduced motion: the resting state, no loop. */
+@media (prefers-reduced-motion: reduce) {
+  .sd-packet,
+  .sd-packetCompact,
+  .sd-flow,
+  .sd-flowCompact,
+  .sd-flow .sd-top,
+  .sd-flowCompact .sd-top,
+  .sd-ink,
+  .sd-dotp,
+  .sd-flowline,
+  .sd-card,
+  .sd-drop,
+  .sd-dropCompact {
+    animation: none !important;
+  }
+}

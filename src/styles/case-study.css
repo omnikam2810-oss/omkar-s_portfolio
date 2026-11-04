@@ -1,0 +1,39 @@
+/* Case study pages: the animated architecture diagram, one keyframe set per diagram. */
+
+/* requests and socket events flowing along the architecture diagram */
+@keyframes flowR { to { stroke-dashoffset: -24; } }
+@keyframes flowL { to { stroke-dashoffset: 24; } }
+.cs-wire { stroke-dasharray: 6 6; animation: flowR 1.1s linear infinite; }
+.cs-wire-back { stroke-dasharray: 6 6; animation: flowL 1.1s linear infinite; }
+
+/* The pills come out of the hub once, when the visual scrolls into view, and stay where they land.
+   Until then they wait, paused on their first frame (tucked behind the hub, invisible). Their resting
+   place is wherever the layout puts them, so reduced motion (no animation) still shows every pill.
+   --fx / --fy (set by scatter-to-hub.tsx) are each pill's distance from the hub's centre. */
+@keyframes spread {
+  from { transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.5); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes hubPop {
+  from { transform: scale(0.9); }
+  60% { transform: scale(1.04); }
+  to { transform: scale(1); }
+}
+.cs-scatter {
+  animation: spread 1.1s cubic-bezier(0.22, 1, 0.36, 1) both paused;
+  animation-delay: var(--dl);
+}
+.cs-hub { animation: hubPop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both paused; }
+[data-in-view] .cs-scatter,
+[data-in-view] .cs-hub { animation-play-state: running; }
+
+/* status dot: green for Live, amber for In progress (colour comes from --dot) */
+@keyframes statusPulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot) 45%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 7px transparent; }
+}
+.cs-dot { animation: statusPulse 2.2s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-wire, .cs-wire-back, .cs-scatter, .cs-hub, .cs-dot { animation: none !important; }
+}

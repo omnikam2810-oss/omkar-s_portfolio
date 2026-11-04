@@ -1,0 +1,131 @@
+---
+title: RepoLens AI
+slug: repolens
+caseNumber: "02"
+tagline: Understand an unfamiliar codebase in minutes, not days.
+role: Full-stack developer
+stack: React · Tree-sitter · Graphviz · Gemini
+timeline: ""                  # optional: add a duration (e.g. "3 months"); empty hides it
+status: Live
+liveUrl: https://repo-lens-zeta.vercel.app/
+repoUrl: https://github.com/omnikam2810-oss/RepoLens
+heroCaption: "The dashboard: repository stats, commit activity and an AI-written insight."
+next:
+  title: FitTrack
+  slug: fittrack
+  blurb: A mobile workout tracker, built with React Native and Expo.
+---
+
+<Section number="01" eyebrow="The problem" title="New codebase, *no map.*" visual={<ScatterToHub hub="RepoLens AI" pills={["Hundreds of files","Hidden dependencies","Unknown entry points","Missing docs","Mixed languages","Tribal knowledge"]} />}>
+
+When developers join an existing project, they spend a lot of time just getting oriented: opening files one by one, tracing dependencies, and working out how the pieces fit together.
+
+RepoLens AI is for developers, students and engineering teams facing an unfamiliar or complex codebase. It brings repository analysis, architecture visualisation, AI-assisted code understanding and documentation generation into one place, so people become productive faster.
+
+</Section>
+
+<Section number="02" eyebrow="What I built" title="Everything a team needs to *read a codebase faster.*">
+
+Paste a public GitHub URL and RepoLens returns one report, written for developers, recruiters and teams alike. It is organised around four questions a newcomer asks first.
+
+<ModuleCard name="Architecture intelligence" icon="chart">
+How the system fits together, as a readable technical narrative.
+
+- Folders, entry points, services and components mapped
+- Routing, modules and data flow summarised for quick review
+- Architecture diagrams generated with Graphviz
+</ModuleCard>
+
+<ModuleCard name="Setup clarity" icon="rocket">
+How to get it running, without digging through the repo.
+
+- Install steps and runtime requirements
+- Package manifests and framework signals turned into practical insight
+- Onboarding guidance drawn from the repository itself
+</ModuleCard>
+
+<ModuleCard name="Quality review" icon="shield">
+How healthy the code is, at a glance.
+
+- Maintainability signals and a concise health score
+- Security suggestions and dependency notes
+- A readability score and a list of actionable suggestions
+</ModuleCard>
+
+<ModuleCard name="Project structure" icon="tree">
+Where to look first.
+
+- A focused repository tree, with the important files and directories grouped
+- An interactive map from the entry point down through folders and files
+- A recruiter view: the project's value, purpose and technical scope without the noise
+</ModuleCard>
+
+</Section>
+
+<Section number="03" eyebrow="How it works" title="From a URL to a *structured report.*">
+
+The whole experience is three steps, and the report can be exported and shared.
+
+1. **Paste a public repository.** RepoLens validates the GitHub URL and prepares the analysis.
+2. **Build a repository snapshot.** The backend fetches the metadata, the directory structure and the high-signal files.
+3. **Generate structured insight.** Gemini returns a typed report, which the dashboard renders as scores, sections and the repository map.
+
+</Section>
+
+<Section number="04" eyebrow="Architecture" title="A pipeline, *one stage at a time.*">
+
+Reading files one at a time can't reveal a whole architecture, so RepoLens turns a repository into a structured representation first. Each stage has one job: import the repo, analyse its file structure, parse the source with Tree-sitter, draw the architecture with Graphviz, and only then hand that structure to the LLM to explain.
+
+<SystemDiagram
+  nodes={[
+    { id: "app", col: 0, row: 1, tag: "Client · Vercel", title: "React dashboard", sub: "Scores, repository map, export" },
+    { id: "api", col: 1, row: 0, rows: 3, tag: "Server", title: "Analysis API", accent: true, chips: ["Validate URL", "Build snapshot", "Typed report"] },
+    { id: "github", col: 2, row: 0, tag: "Source", title: "GitHub", sub: "Metadata, file tree, key files" },
+    { id: "parse", col: 2, row: 1, tag: "Analysis", title: "Tree-sitter + Graphviz", sub: "Components and architecture diagram" },
+    { id: "gemini", col: 2, row: 2, tag: "AI", title: "Gemini", sub: "Explanations and the typed insight" },
+  ]}
+  edges={[
+    { from: "app", to: "api", label: "URL" },
+    { from: "app", to: "api", label: "REPORT", kind: "back" },
+    { from: "api", to: "github", label: "FETCH" },
+    { from: "api", to: "github", kind: "back" },
+    { from: "api", to: "parse", label: "PARSE" },
+    { from: "api", to: "parse", kind: "back" },
+    { from: "api", to: "gemini", label: "ASK" },
+    { from: "api", to: "gemini", label: "INSIGHT", kind: "back" },
+  ]}
+/>
+
+</Section>
+
+<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+
+<Decision n="i." title="Deterministic tools for facts">
+Tree-sitter extracts the real structure of the code, and Graphviz draws it. The diagrams come from parsing, not from a model's guess.
+</Decision>
+
+<Decision n="ii." title="The LLM explains, it doesn't discover">
+The model receives a snapshot that has already been extracted and returns a typed report (scores, sections, suggestions), so the dashboard renders fields it can rely on instead of parsing free text.
+</Decision>
+
+<Decision n="iii." title="OpenAI-compatible by design">
+Building against an OpenAI-compatible API means the provider can be swapped by configuration, with local inference through Ollama as a future option.
+</Decision>
+
+</Section>
+
+<HardestPart quote="Turning a whole repository into *one structured picture* an interface and an LLM could both use.">
+
+Many files and interconnected components meant reading files one by one wasn't enough. I split the work into a pipeline where every stage has a single, clear responsibility:
+
+1. Import the repository and analyse its file structure
+2. Parse the source code with Tree-sitter to recover components and relationships
+3. Visualise the architecture with Graphviz, then pass the structure to the LLM for explanations
+
+</HardestPart>
+
+<Learnings>
+- **Structure beats skimming:** understanding a large codebase needs structured analysis, not reading files one by one.
+- **Tools and LLMs do different jobs:** Tree-sitter and Graphviz extract and show structure; the LLM explains it in natural language.
+- **Modularity pays off:** keeping import, architecture recovery, AI chat, documentation and code quality separate makes the app easier to maintain and extend.
+</Learnings>

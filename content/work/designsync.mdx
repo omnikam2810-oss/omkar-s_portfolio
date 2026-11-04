@@ -1,0 +1,138 @@
+---
+title: DesignSync
+slug: designsync
+caseNumber: "01"
+tagline: One place to collaborate on design projects, and to learn system design.
+role: Full-stack developer
+stack: MERN · Socket.IO
+timeline: ""                  # optional: add a duration; empty hides it
+status: Live
+liveUrl: https://outlaw-seven.vercel.app/
+repoUrl: https://github.com/omnikam2810-oss/Outlaw
+heroCaption: "The project board: deliverables in review, changes requested and approved, with live client comments."
+next:
+  title: RepoLens AI
+  slug: repolens
+  blurb: Turning live GitHub data into LLM-written insight.
+---
+
+<Section number="01" eyebrow="The problem" title="Collaboration was *scattered.*" visual={<ScatterToHub hub="DesignSync" pills={["Chat threads","Shared drives","Email feedback","Design files","Tutorials","Task boards"]} />}>
+
+Students, developers and design teams were spreading their work across too many places. Project collaboration lived in one tool, design submissions in another, feedback in chats and email, and learning resources somewhere else again.
+
+The goal was one platform where a team could run a design project end to end, and learn system design along the way.
+
+</Section>
+
+<Section number="02" eyebrow="What I built" title="Three modules, *one platform.*">
+
+<ModuleCard name="Studios" icon="board">
+Project collaboration and design workflows: where teams plan work, submit designs and review them together.
+
+- A project board with Active and Completed views, each card showing its status, client and due date
+- New projects created and assigned to a client from the board
+- Design submissions and client feedback, with reviews tracked per project
+- Real-time collaboration and notifications, so updates appear without a refresh
+</ModuleCard>
+
+<ModuleCard name="Academy" icon="cap">
+Structured system-design learning with real-world examples, so people learn how actual applications are designed, not just the theory.
+
+- Assignments created by admins, with a status for each one (Pending, then Submitted)
+- Students submit their work; admins open it and review it
+- Lessons on architecture, scalability, databases, APIs, caching and real-time communication
+- Worked examples, like how a ride-booking app handles requests, driver matching, live location and scale
+</ModuleCard>
+
+<ModuleCard name="Admin console" icon="shield">
+The control room for the whole workspace: who can sign in, what they can do, and what is happening right now.
+
+- A dashboard with total projects, active clients, pending approvals and active projects, plus a recent-activity feed
+- User management: create login IDs that are approved at once, or approve and reject self-registered accounts
+- Four roles (Admin, Designer, Enterprise Client, Academy Student), each seeing only its own part of the app
+- Search, edit, delete and profile photos for every user, with light and dark themes across the app
+</ModuleCard>
+
+</Section>
+
+<Section number="03" eyebrow="Inside the app" title="What each role *actually sees.*">
+
+Every screen shares one layout: a sidebar for the workspace, a header with notifications, the theme switch and the signed-in user, and a page that opens with its own summary.
+
+- **Admin dashboard:** workspace health at a glance, with counts for projects, clients and pending approvals, and the latest feedback and review activity.
+- **User management:** create login IDs, approve or reject sign-ups, and manage roles and photos.
+- **Studios:** every project with its status, client and due date, filtered by Active or Completed.
+- **Academy:** assignments move from Pending to Submitted, then get opened and reviewed.
+
+</Section>
+
+<Section number="04" eyebrow="Architecture" title="REST for data, *sockets for now.*">
+
+A React frontend talks to an Express API over REST for everything stored, and keeps a Socket.IO connection open for anything that has to appear instantly. Every request passes JWT authentication and a role check before it touches MongoDB.
+
+<SystemDiagram
+  nodes={[
+    { id: "app", col: 0, row: 1, tag: "Client · Vercel", title: "React app", sub: "Studios, Academy and the admin console" },
+    { id: "api", col: 1, row: 0, rows: 3, tag: "Server · Render", title: "Express API", accent: true, chips: ["verifyJWT", "authorize(role)", "Socket.IO server"] },
+    { id: "studios", col: 2, row: 0, tag: "Service", title: "Studios", sub: "Projects, submissions, reviews" },
+    { id: "academy", col: 2, row: 1, tag: "Service", title: "Academy", sub: "Assignments and lessons" },
+    { id: "admin", col: 2, row: 2, tag: "Service", title: "Admin and users", sub: "Roles and sign-up approvals" },
+    { id: "mongo", col: 3, row: 0, rows: 3, tag: "Data", title: "MongoDB", sub: "All application data" },
+  ]}
+  edges={[
+    { from: "app", to: "api", label: "REST" },
+    { from: "app", to: "api", label: "EVENTS", kind: "back" },
+    { from: "api", to: "studios" },
+    { from: "api", to: "academy", label: "ROUTES" },
+    { from: "api", to: "admin" },
+    { from: "studios", to: "mongo" },
+    { from: "academy", to: "mongo", label: "R / W" },
+    { from: "admin", to: "mongo" },
+  ]}
+/>
+
+</Section>
+
+<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+
+<Decision n="i." title="Roles checked on the server">
+Authentication and role-based access live in API middleware, so what someone can see or change never depends on the frontend hiding a button. Self-registered accounts stay pending until an admin approves them, and can't sign in before that.
+
+```js
+router.use(authenticate);
+
+router.post("/submissions/:id/review", authorize("admin", "designer"), reviewSubmission);
+```
+</Decision>
+
+<Decision n="ii." title="Socket.IO for live updates">
+REST stays the source of truth; sockets only announce that something changed, so collaborators see updates instantly without polling.
+
+```js
+// after the REST call has saved the feedback, tell everyone viewing that file
+const io = req.app.get("io");
+if (io) io.emit(`feedback:new:${deliverableId}`, populated);
+```
+</Decision>
+
+<Decision n="iii." title="Modular on both sides">
+Reusable React + Tailwind components on the front and separate Express services on the back, so Studios and Academy share one foundation.
+</Decision>
+
+</Section>
+
+<HardestPart quote="Keeping the frontend and backend *in sync* while everything happened in real time.">
+
+I traced the data flow end to end, from a click in React, through the API, to the Socket.IO event and back into the interface, and checked three things at every hop:
+
+1. Each event is handled correctly
+2. Updates reach only the intended users
+3. The interface always shows the latest state
+
+</HardestPart>
+
+<Learnings>
+- **Asynchronous communication:** how requests, responses and events interleave, and where they can race.
+- **Event-driven architecture:** designing around things that happen, not just data that's stored.
+- **Full-stack debugging:** following one bug from the UI to the database and back.
+</Learnings>
