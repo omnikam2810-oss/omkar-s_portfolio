@@ -18,17 +18,17 @@ type Command = {
 };
 
 const COMMANDS: Command[] = [
-  {
-    label: "Go to Experience",
-    hint: "SECTION",
-    href: `#${SECTION.experience}`,
-  },
   { label: "Go to Projects", hint: "SECTION", href: `#${SECTION.work}` },
   {
     label: "What has Omkar built with AI?",
     hint: "FILTER",
     href: `#${SECTION.work}`,
     filter: "ai",
+  },
+  {
+    label: "Go to Experience",
+    hint: "SECTION",
+    href: `#${SECTION.experience}`,
   },
   {
     label: "Go to Journey timeline",

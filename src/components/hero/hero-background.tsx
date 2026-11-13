@@ -55,9 +55,8 @@ export function HeroBackground() {
 
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
-      const hotColour = hot();
       for (const n of specks) {
-        ctx.fillStyle = n.hot ? hotColour : "rgba(150,130,110,0.22)";
+        ctx.fillStyle = n.hot ? "rgba(150,130,110,0.32)" : "rgba(150,130,110,0.20)";
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.s * 0.42, 0, Math.PI * 2);
         ctx.fill();

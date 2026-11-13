@@ -63,7 +63,7 @@
   --line-4: #d9d9de;
   --line-5: #cfcfd5;
   --line-6: #c4c4cb;
-  --card-line-hover: #cfd8d7;
+  --card-line-hover: #d4d4d8;
 
   /* the dark footer */
   --foot-text: #d4d4d8;
@@ -139,17 +139,7 @@
 /* A soft teal haze behind the hero headline, with faint rings fanning out of it, as in the reference.
    It sits under everything (the particles and the content are drawn after it) and fades out at the bottom. */
 :root section#top::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(60% 55% at 38% 34%, rgba(20, 145, 138, 0.11) 0%, rgba(20, 145, 138, 0.04) 45%, transparent 75%),
-    radial-gradient(40% 40% at 78% 22%, rgba(94, 200, 192, 0.07) 0%, transparent 70%),
-    repeating-radial-gradient(circle at 38% 34%, transparent 0 140px, rgba(15, 118, 110, 0.03) 141px 142px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  content: none;
 }
 
 /* The contact block as a large dark card with a teal call to action. Inside it the text and surface tokens
@@ -286,7 +276,7 @@
   --line-4: #34373c;
   --line-5: #3d4046;
   --line-6: #464a50;
-  --card-line-hover: #35625e;
+  --card-line-hover: #3f3f46;
 
   /* the footer */
   --foot-text: #d4d4d8;

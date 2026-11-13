@@ -31,8 +31,8 @@ export const SECTION = {
 
 /** In the order the sections appear on the page. */
 export const NAV_LINKS = [
-  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Projects", href: `#${SECTION.work}` },
+  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Journey", href: `#${SECTION.journey}` },
   { label: "How I build", href: `#${SECTION.process}` },
   { label: "Contact", href: `#${SECTION.contact}` },
@@ -40,8 +40,8 @@ export const NAV_LINKS = [
 
 /** The phone menu leads with the work, as in the mobile design. */
 export const MOBILE_NAV_LINKS = [
-  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Work", href: `#${SECTION.work}` },
+  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Journey", href: `#${SECTION.journey}` },
   { label: "How I build", href: `#${SECTION.process}` },
   { label: "Contact", href: `#${SECTION.contact}` },

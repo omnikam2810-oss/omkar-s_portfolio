@@ -10,7 +10,7 @@ import { EASE, REVEAL_VIEWPORT, useRevealTransition } from "@/components/motion/
  * shadow, and a faint light follows the cursor.
  */
 export const spotlightCardClass =
-  "rounded-card border border-line bg-surface shadow-(--card-shadow-rest) bg-[radial-gradient(460px_circle_at_var(--mx,-999px)_var(--my,-999px),color-mix(in_srgb,var(--accent-2)_var(--spot),transparent),transparent_45%)] transition-[translate,border-color,box-shadow] duration-600 ease-brand hover:-translate-y-0.5 hover:border-card-line-hover hover:shadow-(--card-shadow-hover) motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+  "rounded-card border border-line bg-surface shadow-(--card-shadow-rest) bg-[radial-gradient(460px_circle_at_var(--mx,-999px)_var(--my,-999px),color-mix(in_srgb,var(--ink)_var(--spot),transparent),transparent_45%)] transition-[translate,border-color,box-shadow] duration-600 ease-brand hover:-translate-y-0.5 hover:border-card-line-hover hover:shadow-(--card-shadow-hover) motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 
 /** Moves the card's light to the cursor (writes CSS variables, no re-render). */
 export function trackSpotlight(e: MouseEvent<HTMLElement>) {

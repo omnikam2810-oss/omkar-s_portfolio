@@ -32,11 +32,12 @@ export default function Home() {
         // "<" is escaped so the JSON can never close the script tag early.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }}
       />
+
       <Hero />
       <TechStrip />
       <HighlightsStrip />
-      <Experience />
       <Work />
+      <Experience />
       <Journey />
       <AboutTeaser />
       <Process />

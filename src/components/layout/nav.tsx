@@ -18,8 +18,8 @@ import { MobileMenu } from "./mobile-menu";
 
 // The nav's sections, in the order they appear on the page.
 const SECTIONS_IN_PAGE_ORDER = [
-  SECTION.experience,
   SECTION.work,
+  SECTION.experience,
   SECTION.journey,
   SECTION.process,
   SECTION.contact,
@@ -40,7 +40,7 @@ function HomeNav() {
   const chrome = useTransform(scrollY, [0, 220], [0, 1]);
 
   return (
-    <header className="sticky top-0 z-20 flex justify-center px-3 pt-2.5 lg:px-8 lg:pt-4">
+    <header className="sticky top-0 z-40 flex justify-center px-3 pt-2.5 lg:px-8 lg:pt-4">
       <nav
         aria-label="Main"
         className="relative isolate flex w-full max-w-[1360px] items-center justify-between gap-4 rounded-2xl py-1.5 pr-1.5 pl-4 lg:rounded-[14px] lg:py-2.5 lg:pr-2.5 lg:pl-6"
