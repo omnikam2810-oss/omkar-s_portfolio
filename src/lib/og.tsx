@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LOGO_ASPECT, LOGO_PIECES, LOGO_VIEWBOX } from "@/components/layout/logo-data";
 import { SITE } from "./site";
 
 export const OG_SIZE = { width: 1200, height: 630 };
@@ -7,12 +8,21 @@ export const OG_ALT = `${SITE.name} — ${SITE.title.split("— ")[1]}`;
 // Satori can't read CSS variables, so the light-theme tokens are repeated here.
 const C = { bg: "#f6f6f6", ink: "#18181b", soft: "#6b6b75", muted: "#62626c", accent: "#0f766e", accent2: "#14918a", line: "#e4e4e7" };
 
-/** The logo mark: an ink triangle with an orange one inside. */
+/** The logo mark: the teal "ON" monogram. */
 function Mark({ size }: { size: number }) {
   return (
-    <svg width={size} height={(size * 22) / 26} viewBox="0 0 26 22">
-      <path d="M13 1 L25 21 H1 Z" fill={C.ink} />
-      <path d="M13 10 L18.5 19 H7.5 Z" fill={C.accent2} />
+    <svg width={size} height={size / LOGO_ASPECT} viewBox={LOGO_VIEWBOX}>
+      <defs>
+        {LOGO_PIECES.map((p, i) => (
+          <linearGradient key={i} id={`m${i}`} gradientUnits="userSpaceOnUse" x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}>
+            <stop offset="0" stopColor={p.from} />
+            <stop offset="1" stopColor={p.to} />
+          </linearGradient>
+        ))}
+      </defs>
+      {LOGO_PIECES.map((p, i) => (
+        <path key={i} d={p.d} fill={`url(#m${i})`} />
+      ))}
     </svg>
   );
 }
@@ -34,7 +44,7 @@ export function ogImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Mark size={44} />
+          <Mark size={64} />
           <div style={{ fontSize: 26, letterSpacing: 7, color: C.ink }}>OMKAR NIKAM</div>
         </div>
 
@@ -70,7 +80,7 @@ export function iconImage(size: number) {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: C.bg }}>
-        <Mark size={Math.round(size * 0.66)} />
+        <Mark size={Math.round(size * 0.78)} />
       </div>
     ),
     { width: size, height: size },
@@ -94,7 +104,7 @@ export function caseStudyOgImage({ caseNumber, title, tagline }: { caseNumber: s
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Mark size={44} />
+          <Mark size={64} />
           <div style={{ fontSize: 26, letterSpacing: 7, color: C.ink }}>OMKAR NIKAM</div>
         </div>
 

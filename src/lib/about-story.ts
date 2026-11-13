@@ -15,7 +15,7 @@ export const ABOUT_META = {
  * Photos for the story. Put your own pictures in public/about and set `src` (e.g. "/about/bike.jpg").
  * Until then each slot shows a warm placeholder plate.
  */
-export type PhotoId = "workspace" | "bike" | "workout" | "nature" | "horizon";
+export type PhotoId = "workspace" | "bike" | "workout" | "nature" | "road";
 
 export const PHOTOS: Record<
   PhotoId,
@@ -55,15 +55,16 @@ export const PHOTOS: Record<
     label: "trek or nature",
     position: "50% 40%",
   },
-  horizon: {
-    src: "/about/horizon-f1.jpg",
-    alt: "Side view of a black and red Formula 1 car in a dark studio",
-    label: "wide horizon",
-    // the car sits on the right of the box; the dark left side carries the headline
-    position: "85% 75%",
+  // The closing frame: the same open-road photo as the bike ride, cropped wide toward the road ahead.
+  road: {
+    src: "/about/bike.jpg",
+    alt: "View over the handlebars of a motorcycle on an open highway, the road running away ahead",
+    label: "the road ahead",
+    position: "50% 62%",
   },
 };
 
+/** The four stages of the mindset, in the order they are revealed. */
 export const PRINCIPLES = [
   {
     word: "FAIL.",
@@ -77,7 +78,12 @@ export const PRINCIPLES = [
   },
   {
     word: "REBUILD.",
-    quote: "Every new beginning makes me stronger.",
+    quote: "Progress begins when you choose to try again.",
     text: "Because one failure should never define the whole story. Return to the desk with sharper instincts and stronger resolve.",
+  },
+  {
+    word: "REPEAT.",
+    quote: "Growth isn’t a destination. It’s a continuous process.",
+    text: "Because the point was never to arrive. It’s to keep going, a little sharper each time.",
   },
 ];

@@ -56,11 +56,17 @@ export function HeroBackground() {
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
       for (const n of specks) {
+        // Fade out toward the top and bottom edges, so specks never get cut off into little ticks on the
+        // hairline where the hero meets the strip below it.
+        const fade = Math.min(1, Math.max(0, Math.min(n.y, h - n.y) / 48));
+        if (fade === 0) continue;
+        ctx.globalAlpha = fade;
         ctx.fillStyle = n.hot ? "rgba(150,130,110,0.32)" : "rgba(150,130,110,0.20)";
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.s * 0.42, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
     };
 
     const tick = () => {

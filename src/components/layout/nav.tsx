@@ -57,10 +57,10 @@ function HomeNav() {
           className="flex min-h-11 items-center gap-[9px] text-ink no-underline lg:gap-2.5"
         >
           <span className="lg:hidden">
-            <LogoMark width={20} height={17} />
+            <LogoMark width={30} />
           </span>
           <span className="hidden lg:inline">
-            <LogoMark width={24} height={20} />
+            <LogoMark width={38} />
           </span>
           <span className="font-mono text-[11px] font-medium tracking-[0.2em] lg:text-small">
             OMKAR NIKAM
