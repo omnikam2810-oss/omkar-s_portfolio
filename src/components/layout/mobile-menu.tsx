@@ -61,6 +61,11 @@ export function MobileMenu({ onClose, returnFocusTo }: MobileMenuProps) {
   }, [onClose]);
 
   function go(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    // A page link (/how-i-build) navigates; the menu just closes behind it.
+    if (href.startsWith("/")) {
+      onClose();
+      return;
+    }
     e.preventDefault();
     onClose();
     // Wait a frame so Lenis has restarted before it scrolls.

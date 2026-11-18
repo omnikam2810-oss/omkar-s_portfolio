@@ -256,7 +256,8 @@ export function ProjectList() {
                     cardSlotRefs.current[originalIndex] = el;
                   }
                 }}
-                className="w-full"
+                // Below lg each card has a fixed width, so centre it in its column rather than leaving it at the left.
+                className="flex w-full justify-center lg:block"
               >
                 <ProjectCard
                   project={p}

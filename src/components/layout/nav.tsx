@@ -76,9 +76,10 @@ function HomeNav() {
         >
           {NAV_LINKS.map((link) => {
             // The link for the section being read turns accent; a soft pill glides to wherever you point.
-            const current = activeSection === link.href.slice(1);
+            const current = activeSection === (link.section ?? link.href.slice(1));
+            const Anchor = link.href.startsWith("/") ? Link : "a";
             return (
-              <a
+              <Anchor
                 key={link.href}
                 href={link.href}
                 aria-current={current ? "location" : undefined}
@@ -97,7 +98,7 @@ function HomeNav() {
                   />
                 )}
                 {link.label}
-              </a>
+              </Anchor>
             );
           })}
         </div>
@@ -229,5 +230,7 @@ export function Nav() {
     );
   if (pathname === "/about")
     return <CaseStudyNav backHref="/" backLabel="Home" ariaLabel="About" />;
+  if (pathname === "/how-i-build")
+    return <CaseStudyNav backHref="/" backLabel="Home" ariaLabel="How I build" />;
   return <HomeNav />;
 }

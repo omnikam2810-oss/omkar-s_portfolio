@@ -2,8 +2,6 @@ import { SECTION, SITE } from "@/lib/site";
 import { ButtonLink } from "@/components/ui/button-link";
 import { HighlightsGrid } from "@/components/highlights/highlights";
 import { HeroBackground } from "./hero-background";
-import { StackDiagram, StackDiagramCompact } from "./stack-diagram";
-import { StackParallax } from "./stack-parallax";
 
 /** One line of the H1, unmasked by sliding up inside an overflow-hidden row. */
 function MaskLine({
@@ -92,24 +90,13 @@ export function Hero() {
           <HighlightsGrid />
         </div>
 
-        {/* The four-layer stack section is commented out for now:
-        <StackParallax className="hidden min-w-0 flex-[1_1_700px] md:block min-[1120px]:w-[595px] min-[1120px]:flex-none min-[1120px]:self-start xl:w-[700px]">
-          <div className="min-[1120px]:max-xl:[zoom:0.85]">
-            <StackDiagram />
-          </div>
-        </StackParallax>
-        <div className="w-full md:hidden">
-          <StackDiagramCompact />
-        </div>
-        */}
-
         {/* Right: The project cards deck anchor.
             The 4 project cards start stacked here like a thrown French-suited deck,
             and travel down to their places in the Selected Work row as you scroll. */}
         <div
           id="hero-deck-anchor"
           aria-hidden="true"
-          className="relative min-w-0 flex-[1_1_500px] min-[1120px]:w-[560px] min-[1120px]:flex-none min-[1120px]:self-center xl:w-[640px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center pointer-events-none select-none"
+          className="relative min-w-0 flex-[1_1_500px] min-[1120px]:w-[560px] min-[1120px]:flex-none min-[1120px]:self-center xl:w-[640px] hidden h-[460px] items-center justify-center pointer-events-none select-none lg:flex"
         />
       </div>
     </section>

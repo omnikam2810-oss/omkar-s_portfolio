@@ -190,7 +190,7 @@
   100% { left: calc(100% - 12px); opacity: 0; }
 }
 
-/* ---- journey: a chapter's content enters from below, and the panel edge glows once as it changes (journey-timeline.tsx) ---- */
+/* ---- journey: a chapter's content enters from below, and the panel edge glows once as it changes (see journey-timeline.tsx) ---- */
 @keyframes journey-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
@@ -252,18 +252,6 @@
   background-image: url("/grain.png");
   background-size: 160px 160px;
 }
-/* ---- a terminal's blinking cursor (about page) ---- */
-@keyframes blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-.cursor-blink { animation: blink 1.1s steps(1) infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .cursor-blink { animation: none; }
-}
-
-/* ---- image placeholder: a soft sheen that sweeps across while a screenshot loads (ui/fade-image.tsx) ---- */
-
 /* ---- buttons: arrow slides 4px on hover ---- */
 .arrow {
   display: inline-block;

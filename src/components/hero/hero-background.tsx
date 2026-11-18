@@ -40,19 +40,6 @@ export function HeroBackground() {
       specks.length = target;
     };
 
-    // The specks use the theme's accent (--accent-2), read from CSS.
-    let accentHex = "";
-    let hotFill = "rgba(20,145,138,0.28)";
-    const hot = () => {
-      const hex = getComputedStyle(document.documentElement).getPropertyValue("--accent-2").trim();
-      if (hex !== accentHex && /^#[0-9a-f]{6}$/i.test(hex)) {
-        accentHex = hex;
-        const n = parseInt(hex.slice(1), 16);
-        hotFill = `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},0.28)`;
-      }
-      return hotFill;
-    };
-
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
       for (const n of specks) {
@@ -91,11 +78,18 @@ export function HeroBackground() {
     });
     ro.observe(box);
     if (still) draw();
-    else tick();
+
+    // Only animate while the hero is on screen: scrolled past, the loop stops and costs nothing.
+    const io = new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(raf);
+      if (entry.isIntersecting && !still) tick();
+    });
+    io.observe(box);
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
     };
   }, []);
 

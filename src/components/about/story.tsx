@@ -240,12 +240,14 @@ function Beyond() {
         </p>
       </Reveal>
 
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
-        <Reveal className="rounded-card bg-band p-4 md:p-5 lg:col-span-5">
+      {/* On desktop the three cards share one screen: the grid is as tall as the window allows (up to 760px),
+          and the photos give way to fit it. */}
+      <div className="grid gap-6 lg:h-[min(760px,calc(100svh-7rem))] lg:grid-cols-12 lg:gap-8">
+        <Reveal className="rounded-card bg-band p-4 md:p-5 lg:col-span-5 lg:flex lg:min-h-0 lg:flex-col">
           <Photo
             id="workout"
             sizes="(min-width:1024px) 500px, 100vw"
-            className="mb-5 aspect-square"
+            className="mb-5 aspect-square lg:aspect-auto lg:min-h-0 lg:flex-1"
           />
           <div className="font-mono text-label tracking-[0.14em] text-muted-2 uppercase">
             01 / Gym days — discipline in progress
@@ -259,12 +261,12 @@ function Beyond() {
           </p>
         </Reveal>
 
-        <div className="flex flex-col gap-6 lg:col-span-7 lg:gap-8">
+        <div className="flex flex-col gap-6 lg:col-span-7 lg:min-h-0 lg:gap-8">
           {small.map((s, i) => (
             <Reveal
               key={s.id}
               delay={0.1 * (i + 1)}
-              className="rounded-card bg-band p-4 md:p-5 lg:flex-1"
+              className="rounded-card bg-band p-4 md:p-5 lg:min-h-0 lg:flex-1"
             >
               <div className="grid h-full items-center gap-4 sm:grid-cols-12">
                 <Photo
@@ -316,21 +318,21 @@ function Mindset() {
             <Reveal
               key={p.word}
               delay={0.12 * i}
-              className="grid items-baseline gap-4 border-t border-line-5 py-8 lg:grid-cols-12 lg:gap-6"
+              className="grid items-baseline gap-3 border-t border-line-5 py-5 md:py-6 lg:grid-cols-12 lg:gap-6"
             >
               <div className="font-mono text-label font-bold tracking-[0.14em] text-accent uppercase lg:col-span-2">
                 {["I", "II", "III", "IV"][i]} {"//"} Stage
               </div>
               <h3
-                className={`m-0 font-display text-[40px] leading-none tracking-[-0.02em] md:text-[48px] lg:col-span-4 ${i === 1 || i === 3 ? "text-accent italic" : "text-ink"} ${i === 2 ? "font-bold" : "font-normal"}`}
+                className={`m-0 font-display text-[36px] leading-none tracking-[-0.02em] md:text-[42px] lg:col-span-3 ${i === 1 || i === 3 ? "text-accent italic" : "text-ink"} ${i === 2 ? "font-bold" : "font-normal"}`}
               >
                 {p.word}
               </h3>
-              <div className="lg:col-span-6">
-                <p className="m-0 mb-2 font-display text-[24px] leading-[1.25] text-ink md:text-[28px]">
+              <div className="lg:col-span-7">
+                <p className="m-0 mb-1.5 font-display text-[22px] leading-[1.25] text-ink md:text-[26px]">
                   “{p.quote}”
                 </p>
-                <p className="m-0 text-base leading-[1.7] text-body">
+                <p className="m-0 text-small leading-[1.6] text-body md:text-base">
                   {p.text}
                 </p>
               </div>
@@ -364,7 +366,7 @@ function Mindset() {
 /** Scene 05: a letter to my future self, on old paper, written in ink. */
 function Letter() {
   return (
-    <section data-chapter="4" className={`${SECTION} py-16 md:py-28`}>
+    <section data-chapter="4" className={`${SECTION} overflow-x-clip py-16 md:py-28`}>
       <Reveal className="mb-12 flex flex-col items-center text-center">
         <Scene n="05" label="The future" />
         <h2 className="m-0 mt-3 font-display text-[34px] leading-[1.1] font-medium tracking-[-0.02em] text-ink md:text-[44px]">
@@ -478,53 +480,47 @@ function Letter() {
 /** Scene 06: the final frame, as a black rounded box like the conviction banner above it. */
 function Finale() {
   return (
-    <section data-chapter="5" className={`${SECTION} py-10 md:py-20`}>
-      <Reveal data-dark-box className="relative flex min-h-[460px] items-end overflow-hidden rounded-[20px] bg-btn text-bg lg:min-h-[560px]">
-        {PHOTOS.road.src && (
+    <section data-chapter="5" className={`${SECTION} py-10 md:py-16`}>
+      <Reveal data-dark-box className="relative flex min-h-[420px] items-end overflow-hidden rounded-[20px] bg-btn text-bg">
+        {PHOTOS.horizon.src && (
           <>
             <div className="absolute inset-0">
               <Photo
-                id="road"
+                id="horizon"
                 sizes="(min-width:1024px) 1240px, 100vw"
                 className="size-full rounded-none bg-btn"
               />
             </div>
-            <div className="absolute inset-0 bg-linear-to-t from-btn via-btn/75 to-btn/20 lg:bg-linear-to-r lg:from-btn lg:via-btn/85 lg:to-btn/10" />
+            <div className="absolute inset-0 bg-linear-to-t from-btn via-btn/70 to-btn/10 lg:bg-linear-to-r lg:from-btn lg:via-btn/80 lg:to-transparent" />
           </>
         )}
-        <div className="relative z-10 w-full p-8 md:p-14">
+        <div className="relative z-10 w-full p-8 md:p-12">
           <div className="max-w-3xl">
-            <div className="mb-4 font-mono text-label tracking-[0.22em] text-accent-soft uppercase">
+            <div className="mb-3 font-mono text-label tracking-[0.22em] text-accent-soft uppercase">
               06 — Still becoming
             </div>
-            <h2 className="m-0 mb-8 font-display text-[34px] leading-[1.08] font-medium tracking-[-0.02em] text-bg md:text-[52px]">
+            <h2 className="m-0 mb-5 font-display text-[32px] leading-[1.08] font-medium tracking-[-0.02em] text-bg md:text-[44px]">
               I didn’t come this far just to stay the same.
             </h2>
             {/* the closing line: three quiet beats, then the one that stays */}
-            <div className="m-0 flex flex-col font-display text-[26px] leading-[1.2] tracking-[-0.015em] md:text-[40px]">
-              {["Still learning.", "Still exploring.", "Still building."].map((line, i) => (
-                <Reveal key={line} y={10} delay={0.18 * (i + 1)} className="text-bg/60">
-                  {line}
-                </Reveal>
-              ))}
-              <Reveal y={10} delay={0.18 * 4 + 0.15} className="text-accent-soft italic">
+            <div className="m-0 flex flex-col font-display tracking-[-0.015em]">
+              <div className="flex flex-wrap gap-x-3 text-[22px] leading-[1.25] md:text-[30px]">
+                {["Still learning.", "Still exploring.", "Still building."].map((line, i) => (
+                  <Reveal key={line} y={10} delay={0.18 * (i + 1)} className="text-bg/60">
+                    {line}
+                  </Reveal>
+                ))}
+              </div>
+              <Reveal y={10} delay={0.18 * 4 + 0.15} className="text-[34px] leading-[1.15] text-accent-soft italic md:text-[46px]">
                 Still becoming.
               </Reveal>
             </div>
-            <div className="mt-8 flex flex-col gap-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span className="font-display text-title font-semibold text-bg">
-                  — {SITE.name}
-                </span>
-                <span className="font-mono text-label text-bg/70 uppercase">
-                  Engineer · Builder · Explorer
-                </span>
-              </div>
-              <p className="m-0 font-display text-[22px] text-accent-soft italic">
-                And the story continues…
-              </p>
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="font-display text-title font-semibold text-bg">— {SITE.name}</span>
+              <span className="font-mono text-label text-bg/70 uppercase">Engineer · Builder · Explorer</span>
+              <span className="font-display text-[19px] text-accent-soft italic">And the story continues…</span>
             </div>
-            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
               <ButtonLink
                 href={`mailto:${SITE.email}`}
                 className="bg-bg! text-small text-btn! [--pill:2.25rem] hover:bg-accent! hover:text-on-accent!"

@@ -20,7 +20,7 @@ export function Footer() {
             <span className="hidden lg:inline">
               <LogoMark width={46} flat="fill-foot-accent" />
             </span>
-            <span className="font-mono text-[11px] font-medium tracking-[0.2em] text-bg lg:text-[17px] lg:tracking-[0.22em]">
+            <span className="font-mono text-[11px] font-medium tracking-[0.2em] text-foot-text lg:text-[17px] lg:tracking-[0.22em]">
               OMKAR NIKAM
             </span>
           </a>

@@ -34,6 +34,35 @@
 }
 .cs-dot { animation: statusPulse 2.2s ease-out infinite; }
 
+/* ---------- Engineering decisions accordion ---------- */
+
+.ed-card {
+  cursor: default;
+}
+
+/* The collapsible detail uses max-height animation — ensure smooth reveal */
+.ed-detail {
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Next case study preview ---------- */
+
+/* Thumbnail preview container: scale the full preview to fit the panel */
+.cs-next-preview {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Rotating arrow on the Next Case Study card */
+@keyframes arrowOrbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.group:hover .cs-next-arrow {
+  /* handled by Tailwind group-hover utilities in the JSX */
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cs-wire, .cs-wire-back, .cs-scatter, .cs-hub, .cs-dot { animation: none !important; }
+  .ed-detail { transition: none !important; }
 }

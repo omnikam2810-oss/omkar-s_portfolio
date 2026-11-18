@@ -172,7 +172,7 @@
 }
 @media (min-width: 768px) {
   :root [data-contact-card] {
-    padding: 4.5rem 4rem;
+    padding: 3rem 3.5rem;
   }
 }
 :root #contact {
@@ -181,8 +181,8 @@
 }
 @media (min-width: 768px) {
   :root #contact {
-    padding-top: 7rem;
-    padding-bottom: 7rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   }
 }
 

@@ -53,7 +53,7 @@ function ChannelCard({ channel }: { channel: Channel }) {
       {...(download
         ? { download: true }
         : { target: "_blank", rel: "noreferrer" })}
-      className="group flex items-center gap-4 rounded-card border border-line bg-surface p-4 no-underline transition-[translate,border-color,box-shadow] duration-500 ease-brand hover:-translate-y-0.5 hover:border-card-line-hover hover:shadow-(--card-shadow-hover) motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:p-5"
+      className="group flex items-center gap-4 rounded-card border border-line bg-surface p-4 no-underline transition-[translate,border-color,box-shadow] duration-500 ease-brand hover:-translate-y-0.5 hover:border-card-line-hover hover:shadow-(--card-shadow-hover) motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:p-4"
     >
       <span className="flex size-11 shrink-0 items-center justify-center rounded-ui bg-accent-tint text-accent transition-colors duration-300 group-hover:bg-accent group-hover:text-on-accent">
         {icon}
@@ -78,16 +78,16 @@ export function Contact() {
     <section
       id={SECTION.contact}
       aria-labelledby="contact-title"
-      className="rule-top scroll-mt-24 px-4 pt-24 pb-26 md:px-8 md:pt-45 md:pb-[190px] md:before:hidden"
+      className="rule-top scroll-mt-24 px-4 pt-24 pb-26 md:px-8 md:pt-16 md:pb-16 md:before:hidden"
     >
       {/* data-contact-card: the theme draws this block as a dark card (theme.css). */}
       <div data-contact-card className="mx-auto max-w-[1360px]">
         <div className="grid grid-cols-[minmax(0,1fr)] gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-end">
-          <Reveal className="flex flex-col gap-[22px] md:gap-8">
+          <Reveal className="flex flex-col gap-[22px] md:gap-5">
             <Eyebrow>Contact</Eyebrow>
             <RevealHeading
               id="contact-title"
-              className="font-display text-[44px] leading-[1.06] font-medium tracking-[-0.03em] text-ink md:text-display md:leading-[1.04] md:tracking-[-0.035em]"
+              className="font-display text-[44px] leading-[1.06] font-medium tracking-[-0.03em] text-ink md:text-[clamp(44px,4.4vw,68px)] md:leading-[1.04] md:tracking-[-0.035em]"
             >
               Let&apos;s build{" "}
               <span className="text-soft">
@@ -123,7 +123,7 @@ export function Contact() {
             ))}
             <li>
               <Reveal y={18} delay={0.08 * CHANNELS.length}>
-                <div className="flex items-center gap-4 rounded-card border border-dashed border-line-3 p-4 md:p-5">
+                <div className="flex items-center gap-4 rounded-card border border-dashed border-line-3 p-4">
                   <span
                     className="flex size-11 shrink-0 items-center justify-center"
                     aria-hidden="true"
@@ -150,7 +150,7 @@ export function Contact() {
             B.E. Computer Engineering · Ajeenkya DY Patil School of Engineering
             · 2023 – 2027 · CGPA 9.0
           </p>
-          <div className="mt-20 hidden flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-copy text-text md:flex">
+          <div className="mt-10 hidden flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-copy text-text md:flex">
             <span>
               <span className="mr-4 font-mono text-label tracking-[0.22em] text-accent">
                 EDUCATION

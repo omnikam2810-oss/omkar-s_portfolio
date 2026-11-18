@@ -99,7 +99,7 @@ export function ProjectCard({
           {caseStudy && (
             <Link
               href={caseStudy.href}
-              className="group/btn inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-md transition-all duration-200 hover:border-white hover:bg-white hover:text-black active:scale-95"
+              className="group/btn relative inline-flex items-center gap-1 rounded-full before:absolute before:-inset-x-1.5 before:-inset-y-2.5 before:content-[''] border border-white/20 bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-md transition-all duration-200 hover:border-white hover:bg-white hover:text-black active:scale-95"
             >
               Study
               <span
@@ -116,7 +116,7 @@ export function ProjectCard({
               href={sourceLink.href}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex size-6 items-center justify-center rounded-full border border-white/15 bg-white/5 text-xs text-white/70 transition-colors duration-200 hover:border-white/30 hover:bg-white/15 hover:text-white"
+              className="relative inline-flex size-6 items-center justify-center rounded-full before:absolute before:-inset-2.5 before:content-[''] border border-white/15 bg-white/5 text-xs text-white/70 transition-colors duration-200 hover:border-white/30 hover:bg-white/15 hover:text-white"
               aria-label={`View ${project.shortTitle} source code on GitHub`}
               title="GitHub source"
             >

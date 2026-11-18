@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useLenis } from "lenis/react";
-import { NAV_OFFSET, SECTION, SITE } from "@/lib/site";
+import { HOW_I_BUILD_HREF, NAV_OFFSET, SECTION, SITE } from "@/lib/site";
 import { WORK_FILTER_EVENT } from "@/components/work/project-list";
 import { OPEN_COMMAND_MENU } from "./command-menu-trigger";
 
@@ -36,7 +36,7 @@ const COMMANDS: Command[] = [
     href: `#${SECTION.journey}`,
   },
   { label: "About me: Omkar.exe", hint: "PAGE", href: "/about" },
-  { label: "Go to How I build", hint: "SECTION", href: `#${SECTION.process}` },
+  { label: "How I build: workflow & stack", hint: "PAGE", href: HOW_I_BUILD_HREF },
   { label: "Contact", hint: "SECTION", href: `#${SECTION.contact}` },
   { label: "Download resume", hint: "FILE", href: SITE.resume },
   { label: "GitHub — omnikam2810-oss", hint: "LINK ↗", href: SITE.github },

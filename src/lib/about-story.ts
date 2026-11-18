@@ -15,7 +15,7 @@ export const ABOUT_META = {
  * Photos for the story. Put your own pictures in public/about and set `src` (e.g. "/about/bike.jpg").
  * Until then each slot shows a warm placeholder plate.
  */
-export type PhotoId = "workspace" | "bike" | "workout" | "nature" | "road";
+export type PhotoId = "workspace" | "bike" | "workout" | "nature" | "horizon";
 
 export const PHOTOS: Record<
   PhotoId,
@@ -55,12 +55,12 @@ export const PHOTOS: Record<
     label: "trek or nature",
     position: "50% 40%",
   },
-  // The closing frame: the same open-road photo as the bike ride, cropped wide toward the road ahead.
-  road: {
-    src: "/about/bike.jpg",
-    alt: "View over the handlebars of a motorcycle on an open highway, the road running away ahead",
-    label: "the road ahead",
-    position: "50% 62%",
+  horizon: {
+    src: "/about/horizon-f1.jpg",
+    alt: "Side view of a black and red Formula 1 car in a dark studio",
+    label: "wide horizon",
+    // the car sits on the right of the box; the dark left side carries the headline
+    position: "85% 75%",
   },
 };
 

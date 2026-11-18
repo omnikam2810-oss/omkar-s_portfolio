@@ -32,14 +32,18 @@ type ModuleCardProps = { name: string; icon: string; children?: ReactNode };
 
 export function ModuleCard({ name, icon, children }: ModuleCardProps) {
   return (
-    <SpotlightCard className="flex flex-[1_1_440px] flex-col gap-4 p-6 md:p-9">
-      <div className="flex size-11 items-center justify-center rounded-ui bg-accent-tint text-accent">
-        <Icon name={icon} />
+    // Compact on purpose: the cards of a section are meant to share one screen, so the icon sits beside the title
+    // and the text is a size down from the body copy.
+    <SpotlightCard className="flex flex-[1_1_440px] flex-col gap-3 p-5 md:p-6">
+      <div className="flex items-center gap-3.5">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-ui bg-accent-tint text-accent">
+          <Icon name={icon} />
+        </div>
+        <h3 className="m-0 font-display text-[22px] leading-tight font-semibold text-ink md:text-title">
+          {chipify(name)}
+        </h3>
       </div>
-      <h3 className="font-display text-title leading-tight font-semibold text-ink">
-        {chipify(name)}
-      </h3>
-      <div className="flex flex-col gap-4 [&_p]:text-base [&_p]:leading-[1.7]">
+      <div className="flex flex-col gap-2.5 [&_p]:text-[15px] [&_p]:leading-[1.55] [&_ul]:mt-0 [&_ul]:gap-1.5">
         {children}
       </div>
     </SpotlightCard>
@@ -52,35 +56,52 @@ type DecisionProps = { n: string; title: string; children?: ReactNode };
 
 export function Decision({ n, title, children }: DecisionProps) {
   return (
-    // A row, not a column in a grid: each decision is only as tall as its own content, so a short one
-    // never sits in a tall card with empty space. From md the title is on the left, the explanation on the right.
-    <SpotlightCard className="grid gap-x-12 gap-y-4 p-6 md:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] md:p-9">
-      <div className="flex flex-col gap-3.5">
-        <div className="font-mono text-label tracking-[0.16em] text-accent">
+    // A folded row (native <details>, so it works without JavaScript): the title is always visible, and the
+    // explanation opens on a click. It matches the engineering-challenge rows beside it.
+    <details className="group/dec rounded-[18px] border border-line bg-surface transition-[border-color,box-shadow] duration-300 hover:border-line-strong open:border-line-strong">
+      <summary className="flex cursor-pointer list-none items-center gap-4 p-5 sm:gap-5 sm:p-6 [&::-webkit-details-marker]:hidden">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-accent-tint font-mono text-label tracking-[0.06em] text-accent">
           {n}
         </div>
-        <h3 className="font-display text-title leading-[1.2] font-semibold text-ink">
-          {chipify(title)}
-        </h3>
-      </div>
-      <div className="flex flex-col gap-3.5 md:pt-[30px] [&_p]:text-small [&_p]:leading-[1.7]">
+        <div className="min-w-0 flex-1">
+          <div className={`${eyebrowClass} mb-1 text-accent`}>Decision</div>
+          <h3 className="m-0 font-display text-[17px] leading-snug font-semibold text-ink sm:text-[19px]">
+            {chipify(title)}
+          </h3>
+        </div>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="shrink-0 text-muted-2 transition-transform duration-300 group-open/dec:rotate-180 motion-reduce:transition-none"
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </summary>
+      <div className="flex flex-col gap-3 border-t border-line px-5 pt-5 pb-6 sm:px-6 [&_p]:text-small [&_p]:leading-[1.7]">
         {children}
       </div>
-    </SpotlightCard>
+    </details>
   );
 }
 
 /* ---------- HardestPart ---------- */
 
-type HardestPartProps = { quote: string; children?: ReactNode };
+type HardestPartProps = { quote: string; /** The section number shown in the label. */ n?: string; children?: ReactNode };
 
-export function HardestPart({ quote, children }: HardestPartProps) {
+export function HardestPart({ quote, n = "05", children }: HardestPartProps) {
   return (
-    <section aria-labelledby="hardest-part" className="pt-22 md:pt-35">
-      <Reveal className="flex flex-wrap gap-x-16 gap-y-10 rounded-[26px] border border-line bg-bg-alt px-6 py-10 md:px-14 md:py-16">
+    <section aria-labelledby="hardest-part" className="pt-14 md:pt-20">
+      <Reveal className="flex flex-wrap gap-x-16 gap-y-8 rounded-[26px] border border-line bg-bg-alt px-6 py-8 md:px-12 md:py-10">
         <div className="flex flex-[1_1_440px] flex-col gap-5">
           <div id="hardest-part" className={eyebrowClass}>
-            05 — The hardest part
+            {n} — The hardest part
           </div>
           <div
             aria-hidden="true"
@@ -88,13 +109,16 @@ export function HardestPart({ quote, children }: HardestPartProps) {
           >
             “
           </div>
-          <p className="m-0 font-display text-[clamp(28px,3vw,40px)] leading-[1.25] text-ink">
+          <p className="m-0 font-display text-[clamp(24px,2.5vw,34px)] leading-[1.25] text-ink">
             {accentWords(quote)}
           </p>
         </div>
-        <div className="flex flex-[1_1_420px] flex-col gap-[18px]">
-          {children}
-        </div>
+        {/* With no body, the quote stands on its own. */}
+        {Children.count(children) > 0 && (
+          <div className="flex flex-[1_1_420px] flex-col gap-[18px]">
+            {children}
+          </div>
+        )}
       </Reveal>
     </section>
   );
@@ -121,7 +145,7 @@ function splitLearning(item: ReactNode): { title: ReactNode; text: ReactNode } {
   return { title, text: rest };
 }
 
-export function Learnings({ children }: { children?: ReactNode }) {
+export function Learnings({ n = "06", children }: { n?: string; children?: ReactNode }) {
   // The MDX body is a single bullet list; read its items directly.
   const list = Children.toArray(children).find((c) => isValidElement(c));
   const items = isValidElement<{ children?: ReactNode }>(list)
@@ -129,9 +153,9 @@ export function Learnings({ children }: { children?: ReactNode }) {
     : [];
 
   return (
-    <section aria-labelledby="learnings-title" className="pt-22 md:pt-35">
+    <section aria-labelledby="learnings-title" className="pt-14 md:pt-20">
       <Reveal className="flex max-w-[760px] flex-col gap-5">
-        <div className={eyebrowClass}>06 — What I learned</div>
+        <div className={eyebrowClass}>{n} — What I learned</div>
         <RevealHeading
           id="learnings-title"
           className="font-display text-[34px] leading-[1.1] font-medium tracking-[-0.03em] text-ink md:text-section md:leading-[1.06]"
@@ -139,7 +163,7 @@ export function Learnings({ children }: { children?: ReactNode }) {
           What it <em className="font-medium text-accent">taught me.</em>
         </RevealHeading>
       </Reveal>
-      <Reveal className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] border-t border-ink">
+      <Reveal className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] border-t border-ink">
         {items.map((item, i) => {
           const { title, text } = splitLearning(item);
           return (
