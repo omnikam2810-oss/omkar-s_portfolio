@@ -64,6 +64,7 @@ export const PHOTOS: Record<
   },
 };
 
+/** The four stages of the mindset, in the order they are revealed. */
 export const PRINCIPLES = [
   {
     word: "FAIL.",
@@ -77,7 +78,12 @@ export const PRINCIPLES = [
   },
   {
     word: "REBUILD.",
-    quote: "Every new beginning makes me stronger.",
+    quote: "Progress begins when you choose to try again.",
     text: "Because one failure should never define the whole story. Return to the desk with sharper instincts and stronger resolve.",
+  },
+  {
+    word: "REPEAT.",
+    quote: "Growth isn’t a destination. It’s a continuous process.",
+    text: "Because the point was never to arrive. It’s to keep going, a little sharper each time.",
   },
 ];

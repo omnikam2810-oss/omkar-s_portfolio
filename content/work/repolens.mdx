@@ -98,31 +98,49 @@ Reading files one at a time can't reveal a whole architecture, so RepoLens turns
 
 </Section>
 
-<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+<EngineeringDecisions title="Engineering decisions that *mattered.*">
 
-<Decision n="i." title="Deterministic tools for facts">
-Tree-sitter extracts the real structure of the code, and Graphviz draws it. The diagrams come from parsing, not from a model's guess.
-</Decision>
-
-<Decision n="ii." title="The LLM explains, it doesn't discover">
-The model receives a snapshot that has already been extracted and returns a typed report (scores, sections, suggestions), so the dashboard renders fields it can rely on instead of parsing free text.
-</Decision>
-
-<Decision n="iii." title="OpenAI-compatible by design">
+<Decision n="i." title="OpenAI-compatible by design">
 Building against an OpenAI-compatible API means the provider can be swapped by configuration, with local inference through Ollama as a future option.
 </Decision>
 
-</Section>
+<EngineeringCard
+  challenge="Turning a whole repository into one structured picture"
+  difficulty="A repository contains hundreds of files in different languages. Reading them sequentially reveals individual files but not the relationships between them — the architecture stays invisible."
+  approach="A multi-stage pipeline where each stage has exactly one responsibility: fetch the repo, analyse the file structure, parse source with Tree-sitter to extract components and relationships, visualise with Graphviz, then pass the resulting structure to the LLM."
+  reasoning="Separating the pipeline stages means each one is testable and replaceable. It also means the LLM receives a pre-structured representation rather than raw files, which produces far more reliable and accurate responses."
+  outcome="The LLM never guesses at structure — it explains a structure that was already recovered deterministically. The pipeline produces consistent results across very different codebases."
+/>
+
+<EngineeringCard
+  challenge="Getting the LLM to return a typed, renderable report"
+  difficulty="Language models return free text by default. A dashboard cannot render free text as scores, charts and structured sections — it needs reliable, typed fields."
+  approach="The API prompt includes a strict JSON schema for the response. The model is instructed to populate scores, section titles, suggestions and the recruiter summary as typed fields, not prose."
+  reasoning="A typed response separates the generation concern from the rendering concern. The dashboard can trust the shape of the data and render it without parsing, which also makes future schema changes straightforward."
+  outcome="Zero parsing errors in production. The dashboard renders scores, suggestions and the architecture summary from fields it can rely on, with no brittle text extraction."
+/>
+
+<EngineeringCard
+  challenge="Keeping analysis fast enough to feel interactive"
+  difficulty="Fetching a repository, parsing source files, running Graphviz and calling the LLM are all slow. A naive sequential implementation would leave users waiting for 30 seconds or more."
+  approach="Independent stages — GitHub fetch, file structure analysis, Tree-sitter parsing — run in parallel. The LLM call waits only for the stages it actually needs, not for every other stage to complete."
+  reasoning="Most of the pipeline stages do not depend on each other. Parallelising them gives the LLM its input as soon as the slowest dependency finishes, rather than after all stages finish."
+  outcome="End-to-end analysis time is significantly shorter than a fully sequential implementation, and the structure is easy to extend with new parallel stages."
+/>
+
+</EngineeringDecisions>
 
 <HardestPart quote="Turning a whole repository into *one structured picture* an interface and an LLM could both use.">
-
-Many files and interconnected components meant reading files one by one wasn't enough. I split the work into a pipeline where every stage has a single, clear responsibility:
-
-1. Import the repository and analyse its file structure
-2. Parse the source code with Tree-sitter to recover components and relationships
-3. Visualise the architecture with Graphviz, then pass the structure to the LLM for explanations
-
 </HardestPart>
+
+<TechSummary rows={[
+  { label: "Frontend", value: "React, Tailwind CSS" },
+  { label: "Backend", value: "Node.js, REST API" },
+  { label: "Parsing", value: "Tree-sitter (multi-language)" },
+  { label: "Visualisation", value: "Graphviz (architecture diagrams)" },
+  { label: "AI", value: "Gemini API (OpenAI-compatible)" },
+  { label: "Deployment", value: "Vercel (full-stack)" },
+]} />
 
 <Learnings>
 - **Structure beats skimming:** understanding a large codebase needs structured analysis, not reading files one by one.

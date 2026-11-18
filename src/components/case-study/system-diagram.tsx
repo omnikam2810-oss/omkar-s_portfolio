@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import { chipify } from "./placeholders";
 
@@ -52,14 +54,30 @@ function Box({
   node,
   groupLabel,
   className = "",
+  dimmed = false,
+  highlighted = false,
+  onEnter,
+  onLeave,
 }: {
   node: DiagramNode;
   groupLabel?: string;
   className?: string;
+  dimmed?: boolean;
+  highlighted?: boolean;
+  onEnter?: () => void;
+  onLeave?: () => void;
 }) {
   return (
     <div
-      className={`box-border flex flex-col justify-between gap-3 rounded-[18px] border bg-bg p-4 ${node.accent ? "border-accent-2" : "border-line-3"} ${className}`}
+      className={`box-border flex flex-col justify-between gap-3 rounded-[18px] border bg-bg p-4 ${
+        highlighted
+          ? "border-accent-2 shadow-[0_0_0_3px_rgba(20,145,138,0.15)]"
+          : node.accent
+            ? "border-accent-2"
+            : "border-line-3"
+      } transition-[opacity,border-color,box-shadow] duration-200 ${dimmed ? "opacity-40" : "opacity-100"} ${className}`}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
     >
       <div className={LABEL}>
         {chipify(node.tag)}
@@ -125,6 +143,8 @@ export function SystemDiagram({
   edges,
   groups = [],
 }: SystemDiagramProps) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   const cols = Math.max(...nodes.map((n) => n.col)) + 1;
   const { w, gap } = sizes(cols);
 
@@ -197,6 +217,19 @@ export function SystemDiagram({
   const groupOf = (id: string) =>
     groups.find((g) => g.nodes.includes(id))?.label;
 
+  // Hover: which node IDs are highlighted (hovered node + its direct neighbours)
+  const connectedIds = hoveredId
+    ? new Set([
+        hoveredId,
+        ...edges
+          .filter((e) => e.from === hoveredId || e.to === hoveredId)
+          .flatMap((e) => [e.from, e.to]),
+      ])
+    : null;
+
+  const isEdgeHighlighted = (e: DiagramEdge) =>
+    hoveredId !== null && (e.from === hoveredId || e.to === hoveredId);
+
   return (
     <Reveal className="rounded-[22px] border border-line bg-surface px-5 py-7 md:px-10 md:py-12">
       {/* stacked: phones and tablets */}
@@ -253,17 +286,32 @@ export function SystemDiagram({
           width={width}
           height={height}
         >
-          {drawn.map((e, i) => (
-            <path
-              key={i}
-              d={e.d}
-              fill="none"
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-              className={e.kind === "back" ? "cs-wire-back" : "cs-wire"}
-              stroke={e.kind === "back" ? "var(--muted-2)" : "var(--accent-2)"}
-            />
-          ))}
+          {drawn.map((e, i) => {
+            const hl = isEdgeHighlighted(e);
+            return (
+              <path
+                key={i}
+                d={e.d}
+                fill="none"
+                strokeWidth={hl ? 2.5 : 2}
+                vectorEffect="non-scaling-stroke"
+                className={e.kind === "back" ? "cs-wire-back" : "cs-wire"}
+                stroke={
+                  hl
+                    ? e.kind === "back"
+                      ? "var(--muted)"
+                      : "var(--accent)"
+                    : e.kind === "back"
+                      ? "var(--muted-2)"
+                      : "var(--accent-2)"
+                }
+                style={{
+                  opacity: hoveredId === null || hl ? 1 : 0.25,
+                  transition: "opacity 0.2s, stroke 0.2s, stroke-width 0.2s",
+                }}
+              />
+            );
+          })}
         </svg>
 
         {[...placed.values()].map((n) => (
@@ -272,7 +320,14 @@ export function SystemDiagram({
             className="absolute"
             style={{ left: n.x, top: n.y, width: n.w, height: n.h }}
           >
-            <Box node={n} className="h-full" />
+            <Box
+              node={n}
+              className="h-full"
+              dimmed={connectedIds !== null && !connectedIds.has(n.id)}
+              highlighted={hoveredId === n.id}
+              onEnter={() => setHoveredId(n.id)}
+              onLeave={() => setHoveredId(null)}
+            />
           </div>
         ))}
         {drawn.map(
@@ -283,7 +338,12 @@ export function SystemDiagram({
                 className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface px-1.5 py-0.5 font-mono text-[10px] tracking-[0.08em] whitespace-nowrap uppercase ${
                   e.kind === "back" ? "text-muted-2" : "text-accent"
                 }`}
-                style={{ left: e.labelX, top: e.labelY }}
+                style={{
+                  left: e.labelX,
+                  top: e.labelY,
+                  opacity: hoveredId === null || isEdgeHighlighted(e) ? 1 : 0.2,
+                  transition: "opacity 0.2s",
+                }}
               >
                 {chipify(e.label)}
               </span>

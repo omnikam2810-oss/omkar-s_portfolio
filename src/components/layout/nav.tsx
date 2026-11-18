@@ -18,8 +18,8 @@ import { MobileMenu } from "./mobile-menu";
 
 // The nav's sections, in the order they appear on the page.
 const SECTIONS_IN_PAGE_ORDER = [
-  SECTION.experience,
   SECTION.work,
+  SECTION.experience,
   SECTION.journey,
   SECTION.process,
   SECTION.contact,
@@ -40,7 +40,7 @@ function HomeNav() {
   const chrome = useTransform(scrollY, [0, 220], [0, 1]);
 
   return (
-    <header className="sticky top-0 z-20 flex justify-center px-3 pt-2.5 lg:px-8 lg:pt-4">
+    <header className="sticky top-0 z-40 flex justify-center px-3 pt-2.5 lg:px-8 lg:pt-4">
       <nav
         aria-label="Main"
         className="relative isolate flex w-full max-w-[1360px] items-center justify-between gap-4 rounded-2xl py-1.5 pr-1.5 pl-4 lg:rounded-[14px] lg:py-2.5 lg:pr-2.5 lg:pl-6"
@@ -57,10 +57,10 @@ function HomeNav() {
           className="flex min-h-11 items-center gap-[9px] text-ink no-underline lg:gap-2.5"
         >
           <span className="lg:hidden">
-            <LogoMark width={20} height={17} />
+            <LogoMark width={30} />
           </span>
           <span className="hidden lg:inline">
-            <LogoMark width={24} height={20} />
+            <LogoMark width={38} />
           </span>
           <span className="font-mono text-[11px] font-medium tracking-[0.2em] lg:text-small">
             OMKAR NIKAM
@@ -76,9 +76,10 @@ function HomeNav() {
         >
           {NAV_LINKS.map((link) => {
             // The link for the section being read turns accent; a soft pill glides to wherever you point.
-            const current = activeSection === link.href.slice(1);
+            const current = activeSection === (link.section ?? link.href.slice(1));
+            const Anchor = link.href.startsWith("/") ? Link : "a";
             return (
-              <a
+              <Anchor
                 key={link.href}
                 href={link.href}
                 aria-current={current ? "location" : undefined}
@@ -97,7 +98,7 @@ function HomeNav() {
                   />
                 )}
                 {link.label}
-              </a>
+              </Anchor>
             );
           })}
         </div>
@@ -229,5 +230,7 @@ export function Nav() {
     );
   if (pathname === "/about")
     return <CaseStudyNav backHref="/" backLabel="Home" ariaLabel="About" />;
+  if (pathname === "/how-i-build")
+    return <CaseStudyNav backHref="/" backLabel="Home" ariaLabel="How I build" />;
   return <HomeNav />;
 }

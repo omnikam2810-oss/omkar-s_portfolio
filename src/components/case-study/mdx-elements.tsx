@@ -91,9 +91,19 @@ function highlight(code: string): ReactNode {
 /** A fenced code block (MDX renders it as <pre><code>text</code></pre>). */
 export function CodeBlock({ children }: { children?: ReactNode }) {
   const text = isValidElement<{ children?: ReactNode }>(children) ? String(children.props.children ?? "") : String(children ?? "");
+  // Folded away until asked for, so a snippet never makes a decision card three times as tall.
   return (
-    <pre className="m-0 mt-2 whitespace-pre-wrap [overflow-wrap:anywhere] rounded-ui border border-line-panel bg-panel p-4 font-mono text-[12px] leading-[1.8] text-body">
-      <code>{highlight(text.replace(/\n$/, ""))}</code>
-    </pre>
+    <details className="group/code mt-2">
+      <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-2 font-mono text-label tracking-[0.12em] text-accent uppercase [&::-webkit-details-marker]:hidden">
+        <span aria-hidden="true" className="transition-transform duration-200 group-open/code:rotate-90 motion-reduce:transition-none">
+          ›
+        </span>
+        <span className="group-open/code:hidden">View the code</span>
+        <span className="hidden group-open/code:inline">Hide the code</span>
+      </summary>
+      <pre className="m-0 mt-2 whitespace-pre-wrap [overflow-wrap:anywhere] rounded-ui border border-line-panel bg-panel p-4 font-mono text-[12px] leading-[1.8] text-body">
+        <code>{highlight(text.replace(/\n$/, ""))}</code>
+      </pre>
+    </details>
   );
 }

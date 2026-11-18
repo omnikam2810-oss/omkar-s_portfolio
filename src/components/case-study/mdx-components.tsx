@@ -1,9 +1,11 @@
 import type { MDXComponents } from "mdx/types";
 import { Decision, HardestPart, Learnings, ModuleCard } from "./blocks";
+import { EngineeringCard, EngineeringDecisions } from "./engineering-decisions";
 import { A, CodeBlock, InlineCode, Li, Ol, P, Strong, Ul } from "./mdx-elements";
 import { ScatterToHub } from "./scatter-to-hub";
 import { Section } from "./section";
 import { SystemDiagram } from "./system-diagram";
+import { TechSummary, NarrativePull } from "./tech-summary";
 
 /**
  * Everything a case study's MDX can use. The components are generic (props, not hard-coded
@@ -18,6 +20,11 @@ export const mdxComponents: MDXComponents = {
   Decision,
   HardestPart,
   Learnings,
+  // premium engineering enhancements
+  EngineeringDecisions,
+  EngineeringCard,
+  TechSummary,
+  NarrativePull,
   // plain markdown
   p: P,
   strong: Strong,

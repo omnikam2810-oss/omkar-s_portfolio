@@ -120,6 +120,7 @@ function Header({ study }: { study: CaseStudy }) {
       aria-label="Overview"
       className="pt-14 pb-12 md:pt-[72px] md:pb-14"
     >
+      {/* Eyebrow */}
       <div className={`rise flex items-center gap-2.5 ${eyebrowClass}`}>
         <span
           aria-hidden="true"
@@ -127,23 +128,28 @@ function Header({ study }: { study: CaseStudy }) {
         />
         Case study · {caseNumber}
       </div>
-      <h1 className="mt-6 font-display text-display leading-[1.04] font-medium tracking-[-0.022em] text-ink">
+
+      {/* Title — extra breathing room */}
+      <h1 className="mt-7 font-display text-display leading-[1.04] font-medium tracking-[-0.022em] text-ink md:mt-8">
         <span className="block overflow-hidden pb-1">
           <span className="lineup" style={{ animationDelay: "0.08s" }}>
             {title}
           </span>
         </span>
       </h1>
+
+      {/* Tagline — italicd editorial framing */}
       <p
-        className="rise m-0 mt-[18px] max-w-[760px] font-display text-[clamp(22px,2.2vw,28px)] leading-[1.35] text-muted italic"
-        style={{ animationDelay: "0.2s" }}
+        className="rise m-0 mt-5 max-w-[700px] font-display text-[clamp(21px,2vw,27px)] leading-[1.4] text-muted italic"
+        style={{ animationDelay: "0.18s" }}
       >
         {tagline}
       </p>
 
+      {/* Fact grid — scannable metadata */}
       <div
-        className="rise mt-11 grid grid-cols-1 border-y border-line sm:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]"
-        style={{ animationDelay: "0.3s" }}
+        className="rise mt-10 grid grid-cols-1 border-y border-line sm:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]"
+        style={{ animationDelay: "0.28s" }}
       >
         <Fact label="Role" first>
           {role}
@@ -165,10 +171,10 @@ function Header({ study }: { study: CaseStudy }) {
         </Fact>
       </div>
 
-      {/* Phones: the buttons stack, each only as wide as its label. */}
+      {/* CTAs */}
       <div
         className="rise mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3"
-        style={{ animationDelay: "0.4s" }}
+        style={{ animationDelay: "0.38s" }}
       >
         {liveUrl.trim() && (
           <ButtonLink
@@ -265,26 +271,61 @@ function HeroImage({ study }: { study: CaseStudy }) {
 /* ---------- next case study ---------- */
 
 function NextCaseStudy({ next }: { next: CaseStudy["frontmatter"]["next"] }) {
+  const { slug } = next;
+  // Map slugs to their preview components
+  const PreviewComp =
+    slug === "designsync"
+      ? DesignSyncPreview
+      : slug === "repolens"
+        ? RepoLensPreview
+        : slug === "fittrack"
+          ? FitTrackPreview
+          : slug === "devtrace"
+            ? DevTracePreview
+            : null;
+
   return (
     <section
       aria-label="Next case study"
-      className="pt-22 pb-20 md:pt-35 md:pb-30"
+      className="pt-14 pb-14 md:pt-20 md:pb-20"
     >
       <Link href={`/work/${next.slug}`} className="group block no-underline">
-        <SpotlightCard className="flex flex-wrap items-center justify-between gap-6 p-8 md:px-12 md:py-11">
-          <div>
-            <div className={eyebrowClass}>Next case study</div>
-            <div className="mt-2 font-display text-section leading-[1.1] text-ink transition-colors duration-300 group-hover:text-accent">
-              {next.title}
+        <SpotlightCard className="overflow-hidden p-0">
+          <div className="flex flex-wrap items-stretch">
+            {/* Text side */}
+            <div className="flex flex-1 flex-col justify-between gap-8 p-8 md:p-12">
+              <div>
+                <div className={`${eyebrowClass} flex items-center gap-2`}>
+                  <span aria-hidden="true" className="size-[6px] rounded-[2px] bg-accent" />
+                  Next case study
+                </div>
+                <div className="mt-3 font-display text-section leading-[1.08] text-ink transition-colors duration-300 group-hover:text-accent">
+                  {next.title}
+                </div>
+                <div className="mt-2 text-copy text-muted">{next.blurb}</div>
+              </div>
+              {/* Animated circular arrow */}
+              <span
+                aria-hidden="true"
+                className="cs-next-arrow flex size-14 items-center justify-center rounded-full border-2 border-line text-xl text-muted-2 transition-[background-color,border-color,color,transform] duration-500 group-hover:border-accent group-hover:bg-accent group-hover:text-bg group-hover:translate-x-1"
+              >
+                →
+              </span>
             </div>
-            <div className="mt-1.5 text-copy text-muted">{next.blurb}</div>
+            {/* Preview thumbnail — hidden on small phones, visible from sm */}
+            {PreviewComp && (
+              <div
+                aria-hidden="true"
+                className="hidden min-h-[220px] flex-[0_0_320px] overflow-hidden border-l border-line bg-[radial-gradient(60%_80%_at_50%_0%,var(--accent-tint),transparent_70%),linear-gradient(var(--bg-alt),var(--band))] p-4 sm:flex lg:flex-[0_0_380px]"
+              >
+                <div className="w-full overflow-hidden rounded-[12px] border border-line bg-surface shadow-(--pop-shadow)">
+                  <div className="cs-next-preview scale-[0.85] origin-top-left w-[120%]">
+                    <PreviewComp compact />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <span
-            aria-hidden="true"
-            className="arrow flex size-16 items-center justify-center rounded-full bg-btn text-2xl text-bg"
-          >
-            →
-          </span>
         </SpotlightCard>
       </Link>
     </section>

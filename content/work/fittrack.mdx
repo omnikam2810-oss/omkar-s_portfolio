@@ -68,33 +68,51 @@ The Expo app talks to an Express API over REST. The API and MongoDB run in Docke
 
 </Section>
 
-<Section number="04" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+<EngineeringDecisions title="Engineering decisions that *mattered.*">
 
-<Decision n="i." title="One codebase, two platforms">
-React Native with Expo shares most of the code between Android and iOS, and Expo Go makes testing on a real phone fast during development.
-</Decision>
-
-<Decision n="ii." title="Free for everyone">
+<Decision n="i." title="Free for everyone">
 I removed the premium tier and payments so every feature is free to use.
 </Decision>
 
-<Decision n="iii." title="Media off the server">
-Images go to Cloudinary, so the API and database only store references.
-</Decision>
+<EngineeringCard
+  challenge="Docker networking: localhost isn't where you think"
+  difficulty="Inside a container, `localhost` resolves to that container itself — not to the MongoDB container running alongside it. The API silently failed to connect to the database on first boot."
+  approach="Both the API and MongoDB were placed on the same named Docker network. The connection string was updated to use the service name as the hostname (`mongodb://mongodb:27017/fittrack`) and moved to an environment variable."
+  reasoning="Docker's internal DNS resolves service names on a shared network. Using a service name instead of `localhost` is portable: the same connection string works in development, CI, and production without modification."
+  outcome="The API connects to MongoDB reliably in all environments. The environment-variable approach also means no connection string is ever committed to source control."
+/>
 
-</Section>
+<EngineeringCard
+  challenge="Sharing code across Android and iOS without diverging"
+  difficulty="Native mobile development typically means two separate codebases. Even with cross-platform tools, platform-specific UI quirks can force divergence that grows over time."
+  approach="React Native with Expo was chosen as the foundation. Platform-specific code is isolated to a small number of files using `.ios.tsx` / `.android.tsx` extensions; shared business logic and UI live in a single tree."
+  reasoning="Expo abstracts most platform differences and provides a managed build workflow. For a project where feature parity between platforms mattered more than deep native customisation, the tradeoff was clearly worth it."
+  outcome="A single codebase delivers the same experience on Android and iOS. The numeric keypad — the most interaction-critical component — works identically on both platforms with no platform-specific code."
+/>
 
-<HardestPart quote="Inside Docker, *localhost* isn't where you think it is.">
+<EngineeringCard
+  challenge="Keeping media off the server without losing references"
+  difficulty="Storing images on the API server bloats its disk, complicates backups, and doesn't scale. But handing uploads directly to Cloudinary from the client exposes API credentials."
+  approach="The API accepts the image file, streams it to Cloudinary using the Node SDK, receives the hosted URL in response, and stores only that URL in MongoDB. The client never talks to Cloudinary directly."
+  reasoning="The server acts as a trusted intermediary, keeping credentials secret while remaining responsible for all external service calls. MongoDB stays lean — it stores strings, not blobs."
+  outcome="The API binary stays small and stateless. Cloudinary handles delivery, transformation and CDN caching. The pattern is straightforward to replicate for any future file type."
+/>
 
-Inside a container, `localhost` points at that container itself, not at the MongoDB container next to it. I fixed the connection by treating the database as a service on a shared network:
+</EngineeringDecisions>
 
-1. Run the API and MongoDB on the same Docker network
-2. Connect by service name, e.g. `mongodb://mongodb:27017/fittrack`, instead of `localhost`
-3. Keep the connection string in environment variables, so each environment gets the right value
-
+<HardestPart n="04" quote="Inside Docker, *localhost* isn't where you think it is.">
 </HardestPart>
 
-<Learnings>
+<TechSummary rows={[
+  { label: "Mobile", value: "React Native, Expo" },
+  { label: "Backend", value: "Node.js, Express" },
+  { label: "Database", value: "MongoDB (Mongoose)" },
+  { label: "Media", value: "Cloudinary (image storage & CDN)" },
+  { label: "Containers", value: "Docker, Docker Compose" },
+  { label: "Platforms", value: "Android and iOS from one codebase" },
+]} />
+
+<Learnings n="05">
 - **Cross-platform mobile:** using React Native and Expo to share most of the code across platforms.
 - **End-to-end data flow:** wiring the app, API and database carefully so data moves reliably.
 - **Environment configuration:** how database connections, environment variables and container networking change behaviour between environments.

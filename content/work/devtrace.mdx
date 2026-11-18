@@ -93,44 +93,39 @@ A company runs `checkout-api` and `payments-api`. On Friday evening, customers r
 
 </Section>
 
-<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+<EngineeringDecisions title="Engineering decisions that *mattered.*">
 
-<Decision n="i." title="A queue between ingest and storage">
-Telemetry arrives in bursts, and the worst burst comes during an outage. The API only validates and enqueues a batch, then acknowledges it, and workers do the slow work. In a load test the platform sustained about 6,000 items per second with a p95 latency of 113 ms.
-
-```ts
-router.use(ingestRateLimit);
-router.use(requireIngestKey);
-
-router.post("/metrics", asyncHandler(async (req, res) => {
-  const payload = metricsBatchSchema.parse(req.body);
-  await queues.metrics.add(payload.batchId, { ...payload, context: req.ingest! }, {
-    ...jobOptions, // 5 attempts, exponential backoff
-    jobId: `metrics:${req.ingest!.projectId}:${payload.batchId}`
-  });
-  res.status(202).json({ accepted: payload.metrics.length });
-}));
-```
-</Decision>
-
-<Decision n="ii." title="Partitions and retention, not bulk deletes">
-Metrics and logs from busy services grow fast. Monthly partitions keep queries quick, and retention jobs drop old partitions instead of running slow bulk deletes.
-</Decision>
-
-<Decision n="iii." title="The AI suggests, the evidence decides">
+<Decision n="i." title="The AI suggests, the evidence decides">
 Gemini drafts root-cause suggestions and incident summaries, but only from the incident's own evidence: the traces, logs and deployments already attached to it. An engineer reviews it before anything is closed.
 </Decision>
 
-</Section>
+<EngineeringCard
+  challenge="Staying responsive when the platform receives its heaviest traffic during an outage"
+  difficulty="An observability platform gets its peak load exactly when its customers are having an incident. If the ingest API is slow or down during that moment, the data needed for diagnosis is lost."
+  approach="The ingest API validates the payload and immediately enqueues it to a Redis BullMQ queue, then responds `202 Accepted`. Workers running in separate processes pick up the job and do the slow work: writing to PostgreSQL, evaluating alert rules, and pushing live updates."
+  reasoning="Decoupling ingest from processing means the API's response time is bounded by queue insertion speed, not by database write speed. Workers can slow down or fail without affecting the ingest path."
+  outcome="In a load test, the platform sustained approximately 6,000 items per second with a p95 ingest latency of 113 ms — well within acceptable bounds for an observability workload."
+/>
+
+<EngineeringCard
+  challenge="Querying time-series data at scale without bulk deletes"
+  difficulty="Metrics and logs from busy services accumulate fast. Without a strategy, tables grow until queries slow to a crawl. Bulk deletes on large tables can lock rows and block reads."
+  approach="PostgreSQL monthly partitions on the metrics and logs tables. Each month's data lives in its own child table. Retention jobs drop entire partitions — a metadata-only operation — rather than running `DELETE` statements."
+  reasoning="Dropping a partition is orders of magnitude faster than bulk-deleting rows. Queries that filter by time can skip irrelevant partitions entirely, keeping p99 read latency stable as data accumulates."
+  outcome="Partition pruning keeps queries fast as the dataset grows. Retention is a one-line operation: `DROP TABLE metrics_2026_09`. No locks, no slow scans."
+/>
+
+<EngineeringCard
+  challenge="Correlating metrics, traces, logs and deployments in one incident view"
+  difficulty="The root cause of an incident is rarely visible in a single signal. Seeing a latency spike in isolation doesn't tell you which service caused it, what the trace looks like, what the logs say, or whether a deployment happened around the same time."
+  approach="Every telemetry type — metrics, logs, traces, heartbeats — shares a `projectId` and a `traceId` where applicable. The incident view is a join across all four, filtered by the incident's time window. Deployments are stored with timestamps and shown on the same timeline."
+  reasoning="Sharing a common identifier across telemetry types makes correlation a query, not a manual investigation. The engineer sees all the evidence for an incident in one place because the data model was designed for it from the start."
+  outcome="The worked example (a checkout slowdown caused by a bad release) can be investigated entirely within DevTrace: from the alert, to the service map, to the trace, to the log, to the deployment, in a single session."
+/>
+
+</EngineeringDecisions>
 
 <HardestPart quote="Staying up while *everything else is on fire.*">
-
-An observability platform gets its biggest traffic exactly when its customers are having an outage. So I designed for that moment first:
-
-1. Accept a batch quickly and hand it to a queue, so a burst never blocks the API
-2. Process the queue in the background, so a slow database never slows ingest
-3. Prove it with end-to-end and load tests, so an outage-sized burst is something I have already measured
-
 </HardestPart>
 
 <Section number="06" eyebrow="Where it stands" title="What works, *and what's next.*">
@@ -146,7 +141,16 @@ An observability platform gets its biggest traffic exactly when its customers ar
 
 </Section>
 
-<Learnings>
+<TechSummary rows={[
+  { label: "Frontend", value: "React 19, Vite, Tailwind CSS" },
+  { label: "Backend", value: "Node.js, Express, BullMQ workers" },
+  { label: "Database", value: "PostgreSQL (Prisma, monthly partitions)" },
+  { label: "Queue", value: "Redis (BullMQ)" },
+  { label: "Real-time", value: "Socket.IO (live console updates)" },
+  { label: "AI", value: "Gemini (root-cause suggestions)" },
+]} />
+
+<Learnings n="07">
 - **Queues decouple:** a fast acknowledgement and background workers keep a system responsive when load spikes.
 - **Time-series data needs a plan early:** partitioning and retention are far easier to design in than to add once the tables are huge.
 - **Observability is correlation:** a metric, a trace, a log line and a deploy time only explain a failure when they sit side by side.

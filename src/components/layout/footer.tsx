@@ -18,9 +18,9 @@ export function Footer() {
         <div className="flex flex-wrap items-center justify-between gap-6">
           <a href={`#${SECTION.top}`} className="flex min-h-11 items-center gap-3 text-kbd no-underline">
             <span className="hidden lg:inline">
-              <LogoMark width={30} height={26} outer="fill-bg" inner="fill-foot-accent" />
+              <LogoMark width={46} flat="fill-foot-accent" />
             </span>
-            <span className="font-mono text-[11px] font-medium tracking-[0.2em] text-bg lg:text-[17px] lg:tracking-[0.22em]">
+            <span className="font-mono text-[11px] font-medium tracking-[0.2em] text-foot-text lg:text-[17px] lg:tracking-[0.22em]">
               OMKAR NIKAM
             </span>
           </a>

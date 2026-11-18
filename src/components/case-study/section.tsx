@@ -89,7 +89,7 @@ export function Section({
   const proseBlock = <div className="flex flex-col gap-5">{prose}</div>;
 
   return (
-    <section aria-labelledby={id} className="pt-22 md:pt-35">
+    <section aria-labelledby={id} className="pt-14 md:pt-20">
       {visual ? (
         <div className="flex flex-wrap items-center gap-x-[72px] gap-y-12">
           <Reveal className="flex flex-[1_1_460px] flex-col gap-5">
@@ -106,15 +106,15 @@ export function Section({
               <div className="flex-[1_1_380px]">{proseBlock}</div>
             )}
           </Reveal>
-          <div className="mt-11 flex flex-col gap-5 md:mt-12">
+          <div className="mt-8 flex flex-col gap-4 md:mt-9">
             {blocks.map((g, i) =>
               g.kind === "cards" ? (
-                <div key={i} className="flex flex-wrap gap-5">
+                <div key={i} className="flex flex-wrap gap-4">
                   {g.items}
                 </div>
               ) : g.kind === "decisions" ? (
                 <div key={i}>
-                  <div className="flex flex-col gap-5">{g.items}</div>
+                  <div className="flex flex-col gap-3">{g.items}</div>
                   {hasCode(g.items) && (
                     <p className="m-0 mt-3.5 text-small text-muted">
                       Snippets are simplified to show the idea.

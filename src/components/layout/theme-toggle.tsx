@@ -42,7 +42,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       title={`${next === "dark" ? "Dark" : "Light"} theme`}
       className={`flex size-11 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-surface text-text transition-[color,background-color,border-color,scale] duration-200 hover:border-accent hover:text-accent active:scale-[0.94] active:duration-100 motion-reduce:active:scale-100 ${className}`}
     >
-      {/* a half-filled circle; the filled half turns over in the dark theme. */}
+      {/* shows the theme you'd switch to: a moon in light, a sun in dark. */}
       <svg
         width="18"
         height="18"
@@ -50,11 +50,18 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden="true"
-        className={mode === "dark" ? "scale-x-[-1]" : ""}
       >
-        <circle cx="12" cy="12" r="8.5" />
-        <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none" />
+        {next === "dark" ? (
+          <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.6 6.6 0 0 0 10.7 10.7z" />
+        ) : (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+          </>
+        )}
       </svg>
     </button>
   );

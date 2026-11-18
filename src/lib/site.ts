@@ -29,23 +29,34 @@ export const SECTION = {
   contact: "contact",
 } as const;
 
+/** A link in the nav: a section of the home page (`#id`) or a page of its own (`/path`). */
+export type NavLink = {
+  label: string;
+  href: string;
+  /** For a page link: the home-page section it stands for, so the nav still lights up while that section is read. */
+  section?: string;
+};
+
+/** The page "How I build" now lives on; the home page keeps a short band under the same id. */
+export const HOW_I_BUILD_HREF = "/how-i-build";
+
 /** In the order the sections appear on the page. */
-export const NAV_LINKS = [
-  { label: "Experience", href: `#${SECTION.experience}` },
+export const NAV_LINKS: readonly NavLink[] = [
   { label: "Projects", href: `#${SECTION.work}` },
+  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Journey", href: `#${SECTION.journey}` },
-  { label: "How I build", href: `#${SECTION.process}` },
+  { label: "How I build", href: HOW_I_BUILD_HREF, section: SECTION.process },
   { label: "Contact", href: `#${SECTION.contact}` },
-] as const;
+];
 
 /** The phone menu leads with the work, as in the mobile design. */
-export const MOBILE_NAV_LINKS = [
-  { label: "Experience", href: `#${SECTION.experience}` },
+export const MOBILE_NAV_LINKS: readonly NavLink[] = [
   { label: "Work", href: `#${SECTION.work}` },
+  { label: "Experience", href: `#${SECTION.experience}` },
   { label: "Journey", href: `#${SECTION.journey}` },
-  { label: "How I build", href: `#${SECTION.process}` },
+  { label: "How I build", href: HOW_I_BUILD_HREF, section: SECTION.process },
   { label: "Contact", href: `#${SECTION.contact}` },
-] as const;
+];
 
 /** Space the sticky nav takes, so anchor jumps don't land under it. */
 export const NAV_OFFSET = 96;

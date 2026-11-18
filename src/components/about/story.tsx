@@ -3,7 +3,9 @@ import { Reveal } from "@/components/motion/reveal";
 import { ButtonLink } from "@/components/ui/button-link";
 import { PHOTOS, PRINCIPLES, type PhotoId } from "@/lib/about-story";
 import { letterHand, letterScript } from "@/lib/letter-fonts";
+import { ChapterIndicator } from "./chapter-indicator";
 import { LetterWriting } from "./letter-writing";
+import { RevealText } from "./reveal-text";
 import { InstagramIcon } from "@/components/ui/social-icons";
 import { SITE } from "@/lib/site";
 
@@ -32,7 +34,7 @@ function Photo({
           sizes={sizes}
           priority={priority}
           style={{ objectPosition: p.position }}
-          className={`object-cover transition-[scale,filter] ease-brand motion-reduce:transition-none ${p.grayscale ? "grayscale duration-[1400ms] group-hover:scale-[1.12] group-hover:grayscale-0 motion-reduce:group-hover:scale-100" : "duration-700 hover:scale-105"}`}
+          className={`object-cover transition-[scale,filter] ease-brand motion-reduce:transition-none ${p.grayscale ? "grayscale duration-[1400ms] group-hover:grayscale-0" : "duration-700"} group-hover:scale-[1.04] motion-reduce:group-hover:scale-100`}
         />
       ) : (
         <div
@@ -61,28 +63,44 @@ const SECTION = "mx-auto max-w-[1240px] px-4 md:px-8";
 /** Scene 01: the opening. */
 function Opening() {
   return (
-    <section className={`${SECTION} py-14 md:py-24`}>
+    <section data-chapter="0" className={`${SECTION} py-14 md:py-24`}>
       <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-7 lg:pt-8">
           <div className="rise">
             <Scene n="01" label="The beginning" />
           </div>
-          <h1
+          {/* the belief, one word at a time: the sentence in ink, “just to” stepped back, the turn in teal */}
+          <RevealText
+            as="h1"
             id="about-title"
-            className="rise mt-6 mb-8 max-w-2xl font-display text-[44px] leading-[1.06] font-medium tracking-[-0.03em] text-ink md:text-[68px]"
-            style={{ animationDelay: "0.1s" }}
-          >
-            I didn’t come this far just to{" "}
-            <em className="text-accent underline decoration-accent-2/40 decoration-1 underline-offset-8">
-              stay the same.
-            </em>
-          </h1>
-          <p
-            className="rise m-0 mb-10 font-display text-[21px] leading-[1.5] text-muted italic md:text-[25px]"
-            style={{ animationDelay: "0.2s" }}
-          >
-            A story of curiosity, courage, and becoming.
-          </p>
+            onLoad
+            delay={0.15}
+            stagger={0.07}
+            className="mt-6 mb-7 max-w-2xl font-display text-[46px] leading-[1.04] font-medium tracking-[-0.035em] text-ink md:text-[76px]"
+            parts={[
+              { t: "I didn’t come this far " },
+              { t: "just to ", className: "text-soft" },
+              { t: "stay the same.", className: "text-accent italic" },
+            ]}
+          />
+          <RevealText
+            as="p"
+            onLoad
+            delay={1.1}
+            stagger={0.09}
+            className="m-0 mb-10 max-w-xl font-display text-[21px] leading-[1.55] text-muted md:text-[25px]"
+            parts={[
+              { t: "I " },
+              { t: "fail. ", className: "text-ink" },
+              { t: "I " },
+              { t: "learn. ", className: "text-ink" },
+              { t: "I " },
+              { t: "rebuild. ", className: "text-ink" },
+              { t: "I " },
+              { t: "repeat. ", className: "text-ink" },
+              { t: "That’s how I grow.", className: "text-accent italic" },
+            ]}
+          />
           <dl
             className="rise m-0 grid max-w-lg grid-cols-3 gap-4 rounded-card bg-band p-5 md:gap-6 md:p-6"
             style={{ animationDelay: "0.3s" }}
@@ -125,7 +143,7 @@ function Opening() {
 /** Scene 02: the person behind the screen. */
 function Person() {
   return (
-    <section className="bg-bg-alt py-16 md:py-28">
+    <section data-chapter="1" className="bg-bg-alt py-16 md:py-28">
       <div className={SECTION}>
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-20">
           <Reveal className="flex flex-col justify-between gap-8 lg:col-span-4">
@@ -159,24 +177,31 @@ function Person() {
           </Reveal>
           <Reveal
             delay={0.1}
-            className="flex flex-col justify-center gap-7 rounded-card border border-line bg-surface p-7 md:p-12 lg:col-span-8"
+            className="about-grain flex flex-col justify-center gap-8 rounded-card border border-line bg-surface p-7 md:p-12 lg:col-span-8"
           >
-            <p className="m-0 font-display text-[24px] leading-[1.4] text-ink md:text-[30px]">
-              “I’m someone who enjoys{" "}
-              <em className="text-accent">figuring things out</em>. I find
-              excitement in the little things — understanding something I
-              couldn’t yesterday, exploring an idea I hadn’t considered before,
-              and turning a simple thought into something real.”
-            </p>
-            <p className="m-0 font-display text-[19px] leading-[1.75] text-body md:text-[20px]">
-              I don’t have everything figured out, and I’m okay with that. I’d
-              rather keep asking questions, making mistakes, learning from
-              experiences, and discovering{" "}
-              <em className="text-ink">what I’m capable of</em>. In an
-              industry that often celebrates instant certainty, I believe in{" "}
-              <em className="text-accent">deliberate exploration</em> and the
-              beauty of incremental mastery.
-            </p>
+            <RevealText
+              parts={[
+                { t: "I’m someone who enjoys " },
+                { t: "figuring things out. ", className: "text-accent italic" },
+                { t: "I find excitement in the little things — " },
+                { t: "understanding something I couldn’t yesterday, ", className: "text-accent italic" },
+                { t: "exploring an idea I hadn’t considered before, and " },
+                { t: "turning a simple thought into something real.", className: "text-accent italic" },
+              ]}
+              stagger={0.035}
+              className="m-0 font-display text-[24px] leading-[1.4] tracking-[-0.01em] text-ink md:text-[30px]"
+            />
+            <RevealText
+              parts={[
+                { t: "I don’t just enjoy writing code. I enjoy " },
+                { t: "the process behind it: ", className: "text-ink" },
+                { t: "asking questions, making mistakes, learning from experiences, and discovering what happens when " },
+                { t: "curiosity meets persistence.", className: "text-ink italic" },
+              ]}
+              delay={0.2}
+              stagger={0.03}
+              className="m-0 font-display text-[19px] leading-[1.75] text-body md:text-[20px]"
+            />
           </Reveal>
         </div>
       </div>
@@ -191,20 +216,20 @@ function Beyond() {
       id: "bike" as const,
       tag: "02 / Bike rides",
       title: "Freedom on two wheels.",
-      text: "Sometimes the best way to clear your mind is to take the road.",
+      text: "Sometimes the best way to clear your mind is to take the road, with no destination required and the open road ahead.",
     },
     {
       id: "nature" as const,
       tag: "03 / Nature",
       title: "Finding the undiscovered.",
-      text: "There’s something beautiful about getting away from the noise and discovering something new.",
+      text: "There’s something beautiful about getting away from the noise and finding a place I haven’t seen before.",
     },
   ];
   return (
-    <section className={`${SECTION} py-16 md:py-28`}>
+    <section data-chapter="2" className={`${SECTION} py-16 md:py-28`}>
       <Reveal className="mb-12 flex flex-col justify-between gap-5 md:mb-16 md:flex-row md:items-end">
         <div>
-          <Scene n="03" label="Life outside the screen" />
+          <Scene n="03" label="Beyond the code" />
           <h2 className="m-0 mt-3 font-display text-[34px] leading-[1.1] font-medium tracking-[-0.02em] text-ink md:text-[44px]">
             Beyond the code, there’s a life.
           </h2>
@@ -215,30 +240,33 @@ function Beyond() {
         </p>
       </Reveal>
 
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
-        <Reveal className="rounded-card bg-band p-4 md:p-5 lg:col-span-5">
+      {/* On desktop the three cards share one screen: the grid is as tall as the window allows (up to 760px),
+          and the photos give way to fit it. */}
+      <div className="grid gap-6 lg:h-[min(760px,calc(100svh-7rem))] lg:grid-cols-12 lg:gap-8">
+        <Reveal className="rounded-card bg-band p-4 md:p-5 lg:col-span-5 lg:flex lg:min-h-0 lg:flex-col">
           <Photo
             id="workout"
             sizes="(min-width:1024px) 500px, 100vw"
-            className="mb-5 aspect-square"
+            className="mb-5 aspect-square lg:aspect-auto lg:min-h-0 lg:flex-1"
           />
           <div className="font-mono text-label tracking-[0.14em] text-muted-2 uppercase">
             01 / Gym days — discipline in progress
           </div>
-          <h3 className="m-0 mt-1 mb-2 font-display text-[26px] leading-[1.2] font-semibold text-ink">
+          <h3 className="m-0 mt-1 mb-2 font-display text-[30px] leading-[1.15] font-semibold tracking-[-0.01em] text-ink">
             Building strength.
           </h3>
           <p className="m-0 max-w-lg text-base leading-[1.7] text-body">
-            It isn’t just about the body. It’s about showing up.
+            It isn’t just about the body. It’s about showing up, day after day, and pushing a little past yesterday’s
+            limit.
           </p>
         </Reveal>
 
-        <div className="flex flex-col gap-6 lg:col-span-7 lg:gap-8">
+        <div className="flex flex-col gap-6 lg:col-span-7 lg:min-h-0 lg:gap-8">
           {small.map((s, i) => (
             <Reveal
               key={s.id}
               delay={0.1 * (i + 1)}
-              className="rounded-card bg-band p-4 md:p-5 lg:flex-1"
+              className="rounded-card bg-band p-4 md:p-5 lg:min-h-0 lg:flex-1"
             >
               <div className="grid h-full items-center gap-4 sm:grid-cols-12">
                 <Photo
@@ -250,7 +278,7 @@ function Beyond() {
                   <div className="mb-1 font-mono text-label tracking-[0.14em] text-muted-2 uppercase">
                     {s.tag}
                   </div>
-                  <h3 className="m-0 mb-1 font-display text-[22px] leading-[1.2] font-semibold text-ink">
+                  <h3 className="m-0 mb-1.5 font-display text-[24px] leading-[1.15] font-semibold tracking-[-0.01em] text-ink">
                     {s.title}
                   </h3>
                   <p className="m-0 text-small leading-[1.65] text-body">
@@ -269,10 +297,10 @@ function Beyond() {
 /** Scene 04: the mindset, with the dark conviction banner. */
 function Mindset() {
   return (
-    <section className="bg-band py-16 md:py-28">
+    <section data-chapter="3" className="bg-band py-16 md:py-28">
       <div className={SECTION}>
         <Reveal className="mb-12 max-w-3xl md:mb-16">
-          <Scene n="04" label="The mindset" />
+          <Scene n="04" label="The process" />
           <h2 className="m-0 mt-3 mb-5 font-display text-[44px] leading-[1.05] font-medium tracking-[-0.03em] text-ink md:text-[64px]">
             Fail. Learn.
             <br />
@@ -286,23 +314,25 @@ function Mindset() {
 
         <div className="mb-14">
           {PRINCIPLES.map((p, i) => (
+            // Each stage follows the one before it: a short, even delay so they cascade when they enter together.
             <Reveal
               key={p.word}
-              className="grid items-baseline gap-4 border-t border-line-5 py-8 lg:grid-cols-12 lg:gap-6"
+              delay={0.12 * i}
+              className="grid items-baseline gap-3 border-t border-line-5 py-5 md:py-6 lg:grid-cols-12 lg:gap-6"
             >
               <div className="font-mono text-label font-bold tracking-[0.14em] text-accent uppercase lg:col-span-2">
-                {["I", "II", "III"][i]} {"//"} Principle
+                {["I", "II", "III", "IV"][i]} {"//"} Stage
               </div>
               <h3
-                className={`m-0 font-display text-[40px] leading-none tracking-[-0.02em] md:text-[48px] lg:col-span-4 ${i === 1 ? "text-accent italic" : "text-ink"} ${i === 2 ? "font-bold" : "font-normal"}`}
+                className={`m-0 font-display text-[36px] leading-none tracking-[-0.02em] md:text-[42px] lg:col-span-3 ${i === 1 || i === 3 ? "text-accent italic" : "text-ink"} ${i === 2 ? "font-bold" : "font-normal"}`}
               >
                 {p.word}
               </h3>
-              <div className="lg:col-span-6">
-                <p className="m-0 mb-2 font-display text-[24px] leading-[1.25] text-ink md:text-[28px]">
+              <div className="lg:col-span-7">
+                <p className="m-0 mb-1.5 font-display text-[22px] leading-[1.25] text-ink md:text-[26px]">
                   “{p.quote}”
                 </p>
-                <p className="m-0 text-base leading-[1.7] text-body">
+                <p className="m-0 text-small leading-[1.6] text-body md:text-base">
                   {p.text}
                 </p>
               </div>
@@ -310,7 +340,7 @@ function Mindset() {
           ))}
         </div>
 
-        <Reveal data-dark-box className="flex flex-col justify-between gap-8 rounded-[20px] bg-btn p-8 text-bg md:flex-row md:items-center md:p-14">
+        <Reveal data-dark-box className="about-grain flex flex-col justify-between gap-8 rounded-[20px] bg-btn p-8 text-bg md:flex-row md:items-center md:p-14">
           <div className="max-w-2xl">
             <div className="mb-4 font-mono text-label tracking-[0.2em] text-accent-soft uppercase">
               Core conviction
@@ -336,9 +366,9 @@ function Mindset() {
 /** Scene 05: a letter to my future self, on old paper, written in ink. */
 function Letter() {
   return (
-    <section className={`${SECTION} py-16 md:py-28`}>
+    <section data-chapter="4" className={`${SECTION} overflow-x-clip py-16 md:py-28`}>
       <Reveal className="mb-12 flex flex-col items-center text-center">
-        <Scene n="05" label="A note to my future self" />
+        <Scene n="05" label="The future" />
         <h2 className="m-0 mt-3 font-display text-[34px] leading-[1.1] font-medium tracking-[-0.02em] text-ink md:text-[44px]">
           A note to the person I’m becoming.
         </h2>
@@ -450,8 +480,8 @@ function Letter() {
 /** Scene 06: the final frame, as a black rounded box like the conviction banner above it. */
 function Finale() {
   return (
-    <section className={`${SECTION} py-10 md:py-20`}>
-      <Reveal data-dark-box className="relative flex min-h-[420px] items-end overflow-hidden rounded-[20px] bg-btn text-bg lg:min-h-[520px]">
+    <section data-chapter="5" className={`${SECTION} py-10 md:py-16`}>
+      <Reveal data-dark-box className="relative flex min-h-[420px] items-end overflow-hidden rounded-[20px] bg-btn text-bg">
         {PHOTOS.horizon.src && (
           <>
             <div className="absolute inset-0">
@@ -464,31 +494,33 @@ function Finale() {
             <div className="absolute inset-0 bg-linear-to-t from-btn via-btn/70 to-btn/10 lg:bg-linear-to-r lg:from-btn lg:via-btn/80 lg:to-transparent" />
           </>
         )}
-        <div className="relative z-10 w-full p-8 md:p-14">
+        <div className="relative z-10 w-full p-8 md:p-12">
           <div className="max-w-3xl">
-            <div className="mb-4 font-mono text-label tracking-[0.22em] text-accent-soft uppercase">
-              06 — The story continues
+            <div className="mb-3 font-mono text-label tracking-[0.22em] text-accent-soft uppercase">
+              06 — Still becoming
             </div>
-            <h2 className="m-0 mb-6 font-display text-[36px] leading-[1.08] font-medium tracking-[-0.02em] text-bg md:text-[56px]">
+            <h2 className="m-0 mb-5 font-display text-[32px] leading-[1.08] font-medium tracking-[-0.02em] text-bg md:text-[44px]">
               I didn’t come this far just to stay the same.
             </h2>
-            <span className="inline-block rounded bg-white/15 px-3 py-1 font-mono text-label tracking-[0.16em] uppercase backdrop-blur-sm">
-              Still becoming. Never settling.
-            </span>
-            <div className="mt-8 flex flex-col gap-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span className="font-display text-title font-semibold text-bg">
-                  — {SITE.name}
-                </span>
-                <span className="font-mono text-label text-bg/70 uppercase">
-                  Engineer · Builder · Explorer
-                </span>
+            {/* the closing line: three quiet beats, then the one that stays */}
+            <div className="m-0 flex flex-col font-display tracking-[-0.015em]">
+              <div className="flex flex-wrap gap-x-3 text-[22px] leading-[1.25] md:text-[30px]">
+                {["Still learning.", "Still exploring.", "Still building."].map((line, i) => (
+                  <Reveal key={line} y={10} delay={0.18 * (i + 1)} className="text-bg/60">
+                    {line}
+                  </Reveal>
+                ))}
               </div>
-              <p className="m-0 font-display text-[22px] text-accent-soft italic">
-                And the story continues…
-              </p>
+              <Reveal y={10} delay={0.18 * 4 + 0.15} className="text-[34px] leading-[1.15] text-accent-soft italic md:text-[46px]">
+                Still becoming.
+              </Reveal>
             </div>
-            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="font-display text-title font-semibold text-bg">— {SITE.name}</span>
+              <span className="font-mono text-label text-bg/70 uppercase">Engineer · Builder · Explorer</span>
+              <span className="font-display text-[19px] text-accent-soft italic">And the story continues…</span>
+            </div>
+            <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
               <ButtonLink
                 href={`mailto:${SITE.email}`}
                 className="bg-bg! text-small text-btn! [--pill:2.25rem] hover:bg-accent! hover:text-on-accent!"
@@ -522,13 +554,14 @@ function Finale() {
 
 export function Story() {
   return (
-    <article aria-labelledby="about-title">
+    <article aria-labelledby="about-title" data-chapter-root>
       <Opening />
       <Person />
       <Beyond />
       <Mindset />
       <Letter />
       <Finale />
+      <ChapterIndicator />
     </article>
   );
 }

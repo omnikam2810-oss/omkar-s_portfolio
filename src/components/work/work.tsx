@@ -8,7 +8,7 @@ export function Work() {
     <section
       id={SECTION.work}
       aria-labelledby="work-title"
-      className="scroll-mt-24 px-4 pt-22 pb-18 md:px-8 md:pt-40 md:pb-35"
+      className="scroll-mt-24 px-4 pt-16 pb-16 md:px-8 md:pt-24 md:pb-28"
     >
       <div className="mx-auto max-w-[1360px]">
         <Reveal className="flex flex-col gap-4 md:gap-6">

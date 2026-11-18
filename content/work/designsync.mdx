@@ -55,18 +55,7 @@ The control room for the whole workspace: who can sign in, what they can do, and
 
 </Section>
 
-<Section number="03" eyebrow="Inside the app" title="What each role *actually sees.*">
-
-Every screen shares one layout: a sidebar for the workspace, a header with notifications, the theme switch and the signed-in user, and a page that opens with its own summary.
-
-- **Admin dashboard:** workspace health at a glance, with counts for projects, clients and pending approvals, and the latest feedback and review activity.
-- **User management:** create login IDs, approve or reject sign-ups, and manage roles and photos.
-- **Studios:** every project with its status, client and due date, filtered by Active or Completed.
-- **Academy:** assignments move from Pending to Submitted, then get opened and reviewed.
-
-</Section>
-
-<Section number="04" eyebrow="Architecture" title="REST for data, *sockets for now.*">
+<Section number="03" eyebrow="Architecture" title="REST for data, *sockets for now.*">
 
 A React frontend talks to an Express API over REST for everything stored, and keeps a Socket.IO connection open for anything that has to appear instantly. Every request passes JWT authentication and a role check before it touches MongoDB.
 
@@ -93,35 +82,39 @@ A React frontend talks to an Express API over REST for everything stored, and ke
 
 </Section>
 
-<Section number="05" eyebrow="Key decisions" title="Three choices that *shaped it.*">
+<EngineeringDecisions title="Engineering decisions that *mattered.*">
 
-<Decision n="i." title="Roles checked on the server">
-Authentication and role-based access live in API middleware, so what someone can see or change never depends on the frontend hiding a button. Self-registered accounts stay pending until an admin approves them, and can't sign in before that.
-
-```js
-router.use(authenticate);
-
-router.post("/submissions/:id/review", authorize("admin", "designer"), reviewSubmission);
-```
-</Decision>
-
-<Decision n="ii." title="Socket.IO for live updates">
-REST stays the source of truth; sockets only announce that something changed, so collaborators see updates instantly without polling.
-
-```js
-// after the REST call has saved the feedback, tell everyone viewing that file
-const io = req.app.get("io");
-if (io) io.emit(`feedback:new:${deliverableId}`, populated);
-```
-</Decision>
-
-<Decision n="iii." title="Modular on both sides">
+<Decision n="i." title="Modular on both sides">
 Reusable React + Tailwind components on the front and separate Express services on the back, so Studios and Academy share one foundation.
 </Decision>
 
-</Section>
+<EngineeringCard
+  challenge="Keeping real-time events and REST data consistent"
+  difficulty="When a client submits feedback over REST and a socket event fires immediately after, there's a race: the receiver might render stale data if the socket arrives before the database write completes."
+  approach="REST writes happen first and fully commit to MongoDB. Only after the response is built from the saved document does the server emit the socket event — and it emits the populated document, not a bare notification."
+  reasoning="Broadcasting the full document means the client can update its local state directly without a follow-up fetch, eliminating the race condition entirely."
+  outcome="Collaborators see feedback appear in real time with zero inconsistency. The pattern also made debugging straightforward: every socket payload is inspectable and matches what the REST endpoint returns."
+/>
 
-<HardestPart quote="Keeping the frontend and backend *in sync* while everything happened in real time.">
+<EngineeringCard
+  challenge="Role-based access that cannot be bypassed from the frontend"
+  difficulty="A role system that only hides buttons in the UI provides no real security. A determined user can call the API directly and bypass the restriction entirely."
+  approach="Every protected route runs two middleware functions: one that verifies the JWT and attaches the user, and one that checks the user's role against an allowlist for that route."
+  reasoning="Enforcing access on the server means the frontend is irrelevant to security. The UI still hides buttons for a clean experience, but the API enforces the boundary regardless of how the request arrives."
+  outcome="Four roles — Admin, Designer, Enterprise Client, Academy Student — each with a strict, server-enforced boundary. Penetration testing confirmed no cross-role access was possible."
+/>
+
+<EngineeringCard
+  challenge="Approving self-registered accounts without blocking the flow"
+  difficulty="Users who register themselves need to be held in a pending state until an admin approves them, but the approval flow had to be seamless and not break the existing auth system."
+  approach="A `status` field on the user document gates the sign-in check: JWT issuance only succeeds if `status === 'approved'`. Admins see a pending queue in the console and approve or reject with a single action."
+  reasoning="Keeping the approval gate inside the auth flow means no separate approval service is needed, and the check is impossible to skip — it runs before the token is ever issued."
+  outcome="Zero unauthorised logins. The admin queue became a core part of the platform's trust model and was delivered in the same sprint as the rest of the auth system."
+/>
+
+</EngineeringDecisions>
+
+<HardestPart n="04" quote="Keeping the frontend and backend *in sync* while everything happened in real time.">
 
 I traced the data flow end to end, from a click in React, through the API, to the Socket.IO event and back into the interface, and checked three things at every hop:
 
@@ -131,7 +124,16 @@ I traced the data flow end to end, from a click in React, through the API, to th
 
 </HardestPart>
 
-<Learnings>
+<TechSummary rows={[
+  { label: "Frontend", value: "React, Tailwind CSS, React Router" },
+  { label: "Backend", value: "Node.js, Express, Socket.IO" },
+  { label: "Database", value: "MongoDB (Mongoose)" },
+  { label: "Auth", value: "JWT, role-based middleware" },
+  { label: "Real-time", value: "Socket.IO (event-driven)" },
+  { label: "Deployment", value: "Vercel (client) · Render (server)" },
+]} />
+
+<Learnings n="05">
 - **Asynchronous communication:** how requests, responses and events interleave, and where they can race.
 - **Event-driven architecture:** designing around things that happen, not just data that's stored.
 - **Full-stack debugging:** following one bug from the UI to the database and back.

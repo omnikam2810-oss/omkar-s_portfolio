@@ -27,6 +27,10 @@ export type Project = {
   kind: string;
   title: string;
   shortTitle: string;
+  subtitle: string;
+  client: string;
+  bgColor: string;
+  badge: string;
   description: string;
   shortDescription: string;
   tags: string[];
@@ -38,6 +42,7 @@ export type Project = {
     titles: [preview: string, code: string];
     code: ReactNode;
     footer: [left: string, right: string];
+    previewBg?: string;
     /** Phones show the preview on its own, with no window or switch. */
     previewOnlyOnPhone?: boolean;
   };
@@ -54,8 +59,12 @@ export const PROJECTS: Project[] = [
   {
     slug: "designsync",
     kind: "Web app · Deployed",
-    title: "DesignSync — collaborative design delivery",
+    title: "DesignSync",
     shortTitle: "DesignSync",
+    subtitle: "Collaborative design delivery",
+    client: "DesignSync Studios",
+    bgColor: "#421F25",
+    badge: "Full Stack",
     description:
       "A full-stack platform for project management, design hand-off and real-time client collaboration over Socket.io. Role-based access control, JWT authentication and reusable React + Tailwind component libraries, deployed on Vercel and Render.",
     shortDescription:
@@ -82,6 +91,7 @@ export const PROJECTS: Project[] = [
       preview: DesignSyncPreview,
       titles: ["designsync.app — Projects", "routes/invite.js"],
       footer: ["RBAC enforced", "Vercel · Render"],
+      previewBg: "#FFFFFF",
       code: (
         <>
           <span className={`${kw} font-medium`}>POST</span>
@@ -98,8 +108,12 @@ export const PROJECTS: Project[] = [
   {
     slug: "repolens",
     kind: "SaaS · AI analytics",
-    title: "RepoLens AI — GitHub repository analyser",
+    title: "RepoLens AI",
     shortTitle: "RepoLens AI",
+    subtitle: "GitHub repository intelligence",
+    client: "Personal project",
+    bgColor: "#163725",
+    badge: "AI · LLM",
     description:
       "A SaaS analytics platform that pulls live data from the GitHub API and uses custom-engineered LLM prompts to generate repository insights, contribution tracking and developer productivity metrics, visualised in React dashboards.",
     shortDescription:
@@ -119,6 +133,7 @@ export const PROJECTS: Project[] = [
       preview: RepoLensPreview,
       titles: ["repolens — Dashboard", "services/insights.js"],
       footer: ["GitHub API → LLM", "React dashboards"],
+      previewBg: "#16191D",
       code: (
         <>
           <span className={comment}>{"// 1. Fetch live repo data"}</span>
@@ -140,8 +155,12 @@ export const PROJECTS: Project[] = [
   {
     slug: "fittrack",
     kind: "Mobile app · In progress",
-    title: "FitTrack — cross-platform workout logger",
+    title: "FitTrack",
     shortTitle: "FitTrack",
+    subtitle: "Cross-platform workout logger",
+    client: "Personal project",
+    bgColor: "#281C38",
+    badge: "Mobile App",
     description:
       "A React Native (Expo) app to log workouts, track sets and reps and view progress history. Node, Express and MongoDB on the backend, Cloudinary for image uploads, Docker for local databases — with a dark, mobile-first UI. Releasing free.",
     shortDescription:
@@ -161,6 +180,7 @@ export const PROJECTS: Project[] = [
       preview: FitTrackPreview,
       titles: ["FitTrack — iOS / Android", "models/Set.js"],
       footer: ["Expo · Android / iOS", "Cloudinary uploads"],
+      previewBg: "#ECEFF2",
       previewOnlyOnPhone: true,
       code: (
         <>
@@ -178,8 +198,12 @@ export const PROJECTS: Project[] = [
   {
     slug: "devtrace",
     kind: "Platform · Observability",
-    title: "DevTrace — self-hosted observability platform",
+    title: "DevTrace",
     shortTitle: "DevTrace",
+    subtitle: "Self-hosted observability platform",
+    client: "DevTrace Systems",
+    bgColor: "#1A2C3F",
+    badge: "Observability",
     description:
       "A self-hosted observability platform in the space of Datadog and Sentry. A Node agent sends metrics, logs and traces to a queued ingest API, and the console adds a log explorer, trace waterfalls, a service map, alerts, incidents and Gemini-assisted root-cause suggestions. Load-tested at about 6,000 items per second, p95 113 ms.",
     shortDescription:
@@ -206,6 +230,7 @@ export const PROJECTS: Project[] = [
       preview: DevTracePreview,
       titles: ["devtrace — Services", "ingest/route.js"],
       footer: ["202 → queue → workers", "Postgres · Redis"],
+      previewBg: "#16191D",
       code: (
         <>
           <span className={`${kw} font-medium`}>POST</span>

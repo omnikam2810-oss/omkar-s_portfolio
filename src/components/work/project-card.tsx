@@ -1,234 +1,129 @@
 "use client";
 
-import { useState, type CSSProperties, type Ref } from "react";
+import type { CSSProperties, Ref } from "react";
 import Link from "next/link";
 import * as m from "motion/react-m";
-import {
-  spotlightCardClass,
-  trackSpotlight,
-} from "@/components/ui/spotlight-card";
-import { ResponsiveText } from "@/components/ui/responsive-text";
-import { REVEAL_VIEWPORT } from "@/components/motion/reveal";
-import { TechTag } from "@/components/ui/tech-tag";
-import { TrafficLights } from "@/components/ui/traffic-lights";
+import { trackSpotlight } from "@/components/ui/spotlight-card";
 import type { Project } from "./projects";
-
-type View = "preview" | "code";
-
-/** A quick, slightly springy slide for the highlight. */
-const SPRING = { type: "spring", stiffness: 460, damping: 36 } as const;
-
-/** Preview / Code segmented switch. Each button's hit area is stretched to 44px tall. */
-function ViewSwitch({
-  label,
-  view,
-  onChange,
-}: {
-  label: string;
-  view: View;
-  onChange: (v: View) => void;
-}) {
-  return (
-    <span
-      role="group"
-      aria-label={`${label} view`}
-      className="relative isolate flex gap-0.5 rounded-lg bg-line-panel p-0.5 tracking-[0.08em]"
-    >
-      {(["preview", "code"] as const).map((v) => {
-        const on = view === v;
-        return (
-          <button
-            key={v}
-            type="button"
-            aria-pressed={on}
-            onClick={() => onChange(v)}
-            className={`relative cursor-pointer rounded-md border-0 px-2.5 py-[5px] font-mono text-label capitalize transition-colors duration-200 before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-[''] md:px-[9px] md:py-1 md:uppercase ${
-              on ? "text-ink" : "text-muted-2 hover:text-ink"
-            }`}
-          >
-            {on && (
-              <m.span
-                layoutId={`view-thumb-${label}`}
-                aria-hidden="true"
-                className="absolute inset-0 -z-10 rounded-md bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
-                transition={SPRING}
-              />
-            )}
-            {v}
-          </button>
-        );
-      })}
-    </span>
-  );
-}
-
-function ProjectWindow({ project }: { project: Project }) {
-  const [view, setView] = useState<View>("preview");
-  const {
-    preview: Preview,
-    titles,
-    code,
-    footer,
-    previewOnlyOnPhone,
-  } = project.window;
-
-  return (
-    <div
-      className={`mx-3 flex-col overflow-hidden rounded-[14px] border border-line-panel bg-panel md:mx-0 md:rounded-ui lg:col-start-2 lg:row-span-2 lg:row-start-1 ${previewOnlyOnPhone ? "hidden md:flex" : "flex"}`}
-    >
-      <div className="flex items-center justify-between gap-3 border-b border-line-panel px-3 py-[9px] font-mono text-label text-muted md:px-[18px] md:py-3 md:tracking-[0.16em]">
-        <TrafficLights />
-        <span className="hidden truncate tracking-[0.04em] md:inline">
-          {view === "preview" ? titles[0] : titles[1]}
-        </span>
-        <ViewSwitch label={project.shortTitle} view={view} onChange={setView} />
-      </div>
-
-      {view === "preview" ? (
-        // Keyed so the rise replays on every switch; the inner wrapper zooms on card hover.
-        <div
-          key="preview"
-          className="rise flex flex-1 overflow-hidden"
-          style={{ animationDuration: "0.5s" }}
-        >
-          <div className="flex flex-1 flex-col transition-[scale] duration-1000 ease-brand md:group-hover:scale-[1.015] motion-reduce:transition-none">
-            <div className="md:hidden">
-              <Preview compact />
-            </div>
-            <div className="hidden flex-1 md:flex">
-              <Preview />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <pre
-          key="code"
-          className="m-0 min-h-[230px] flex-1 overflow-x-auto p-4 font-mono text-[11px] leading-[1.85] text-body md:min-h-[300px] md:px-6 md:py-[22px] md:text-sm md:leading-[1.9]"
-        >
-          <code>{code}</code>
-        </pre>
-      )}
-
-      <div className="hidden justify-between border-t border-line-panel px-[18px] py-2.5 font-mono text-label tracking-[0.14em] text-muted-2 uppercase md:flex">
-        <span>{footer[0]}</span>
-        <span>{footer[1]}</span>
-      </div>
-    </div>
-  );
-}
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/**
- * From lg up the cards stack: each sticks a little lower than the one before it, so as you scroll the
- * next card slides up and floats over the previous one. Below lg they sit in a normal list, because
- * the stacked cards would be taller than the screen.
- */
 export function ProjectCard({
   project,
   index = 0,
   ref,
+  motionStyle,
 }: {
   project: Project;
   index?: number;
   ref?: Ref<HTMLElement>;
+  motionStyle?: Record<string, unknown>;
 }) {
-  const { preview: Preview, previewOnlyOnPhone } = project.window;
+  const { preview: Preview, previewBg = "#16191D" } = project.window;
   const caseStudy = project.links.find((l) => !l.external);
+  const sourceLink = project.links.find((l) => l.external);
+  const targetHref = caseStudy?.href ?? `/work/${project.slug}`;
 
   return (
     <m.article
       ref={ref}
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={REVEAL_VIEWPORT}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.5, ease: EASE }}
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.45, ease: EASE }}
       onMouseMove={trackSpotlight}
       aria-labelledby={`project-${project.slug}`}
-      style={{ "--i": index } as CSSProperties}
-      className={`group flex flex-col overflow-hidden md:gap-9 md:overflow-visible md:p-9 lg:grid lg:grid-cols-2 lg:grid-rows-[1fr_auto] lg:gap-x-9 lg:gap-y-0 lg:sticky lg:top-[calc(6.5rem+var(--i)*1.25rem)] ${index > 0 ? "lg:shadow-(--stack-shadow)" : ""} ${spotlightCardClass}`}
+      style={
+        {
+          "--i": index,
+          backgroundColor: project.bgColor,
+          willChange: motionStyle ? "transform" : undefined,
+          ...motionStyle,
+        } as CSSProperties
+      }
+      className="group relative flex w-[275px] sm:w-[295px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[24px] border border-white/10 p-4 sm:rounded-[28px] sm:p-5 lg:w-auto shadow-[0_16px_36px_rgba(0,0,0,0.32)] transition-[box-shadow] duration-350 ease-brand hover:shadow-[0_24px_50px_rgba(0,0,0,0.45)] motion-reduce:transition-none bg-[radial-gradient(420px_circle_at_var(--mx,-999px)_var(--my,-999px),rgba(255,255,255,0.08),transparent_55%)] transform-gpu"
     >
-      <div className="flex flex-col gap-2.5 px-5 pt-[22px] pb-[18px] md:gap-4 md:p-0 lg:col-start-1 lg:row-start-1">
-        <div className="font-mono text-label tracking-[0.16em] text-muted-2 uppercase md:tracking-[0.18em]">
-          {project.kind}
-        </div>
-        <h3
-          id={`project-${project.slug}`}
-          className="font-display text-2xl leading-[1.25] font-semibold text-ink md:text-title md:leading-[1.25]"
-        >
-          {caseStudy ? (
+      {/* Top Header: Title, Subtitle, and category badge */}
+      <div className="relative z-20 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h3
+            id={`project-${project.slug}`}
+            className="font-display text-lg font-bold tracking-[-0.02em] text-white sm:text-xl leading-snug truncate"
+          >
             <Link
-              href={caseStudy.href}
-              className="text-inherit no-underline transition-colors duration-200 hover:text-accent"
+              href={targetHref}
+              className="text-white no-underline transition-opacity duration-200 hover:opacity-90"
             >
-              <ResponsiveText full={project.title} short={project.shortTitle} />
+              {project.shortTitle}
             </Link>
-          ) : (
-            <ResponsiveText full={project.title} short={project.shortTitle} />
-          )}
-        </h3>
-        <p className="text-small leading-[1.65] text-body md:text-copy md:leading-[1.8]">
-          <ResponsiveText
-            full={project.description}
-            short={project.shortDescription}
-          />
-        </p>
-        <ul
-          aria-label="Built with"
-          className="m-0 hidden list-none flex-wrap gap-2 p-0 font-mono text-label text-muted-b md:flex"
-        >
-          {project.tags.map((tag) => (
-            <li
-              key={tag}
-              className="group/tag relative inline-flex items-center gap-1.5 rounded-tag border border-line bg-bg px-[9px] py-[5px]"
-            >
-              <TechTag label={tag} />
-            </li>
-          ))}
-        </ul>
+          </h3>
+          <p className="mt-0.5 text-xs text-white/80 font-normal leading-normal line-clamp-1 sm:text-[13px]">
+            {project.subtitle}
+          </p>
+        </div>
+
+        {project.badge && (
+          <span className="shrink-0 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 font-mono text-[9px] tracking-[0.1em] text-white/90 uppercase backdrop-blur-sm">
+            {project.badge}
+          </span>
+        )}
       </div>
 
-      <ProjectWindow project={project} />
-      {previewOnlyOnPhone && (
-        <div className="mx-3 md:hidden">
-          <Preview compact />
+      {/* Center Showcase Mockup: Elevated container framed inside card */}
+      <Link
+        href={targetHref}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative my-4 flex flex-1 items-center justify-center cursor-pointer"
+      >
+        <div
+          className="relative flex h-[180px] sm:h-[195px] w-full items-center justify-center overflow-hidden rounded-[16px] shadow-[0_12px_28px_rgba(0,0,0,0.3)] border border-white/10"
+          style={{ backgroundColor: previewBg }}
+        >
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="w-full origin-center scale-[0.88] sm:scale-[0.92] lg:scale-[0.88] xl:scale-[0.94] transition-transform duration-500 ease-brand group-hover:scale-[0.92] sm:group-hover:scale-[0.96] lg:group-hover:scale-[0.92] xl:group-hover:scale-[0.98]">
+              <Preview compact />
+            </div>
+          </div>
         </div>
-      )}
+      </Link>
 
-      {/* The case study is the main action, so it's a button; the source link stays a text link beside it. */}
-      <div className="flex flex-col items-start gap-1 px-5 pt-1 pb-5 text-small font-semibold sm:flex-row sm:items-center sm:gap-6 md:p-0 lg:col-start-1 lg:row-start-2">
-        {project.links.map((link) => {
-          const label = link.short ? (
-            <ResponsiveText full={link.label} short={link.short} />
-          ) : (
-            link.label
-          );
-          // Internal links (the case study) use next/link, so they navigate without a full reload.
-          return link.external ? (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-1 text-accent no-underline transition-colors duration-200 hover:text-accent-hover"
-            >
-              {label} ↗
-            </a>
-          ) : (
+      {/* Bottom Footer: Client/Project type on left; Actions on right */}
+      <div className="relative z-20 flex items-center justify-between gap-2 pt-1">
+        <div className="font-display text-xs font-semibold tracking-tight text-white sm:text-sm truncate max-w-[120px] sm:max-w-[140px]">
+          {project.client}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {caseStudy && (
             <Link
-              key={link.label}
-              href={link.href}
-              data-variant="primary"
-              className="inline-flex min-h-12 items-center justify-between gap-3 rounded-full bg-btn py-1.5 pr-1.5 pl-6 text-small font-medium text-bg no-underline [--pill:2.25rem] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_8px_18px_-8px_rgba(26,20,16,0.5)] transition-[background-color,color,translate,box-shadow,scale] duration-350 active:scale-[0.97] active:duration-100 motion-reduce:active:scale-100 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-8px_var(--btn-glow)] ease-brand hover:-translate-y-px hover:bg-accent hover:text-on-accent motion-reduce:hover:translate-y-0"
+              href={caseStudy.href}
+              className="group/btn relative inline-flex items-center gap-1 rounded-full before:absolute before:-inset-x-1.5 before:-inset-y-2.5 before:content-[''] border border-white/20 bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-md transition-all duration-200 hover:border-white hover:bg-white hover:text-black active:scale-95"
             >
-              {label}
-              <span aria-hidden="true" className="pill-arrow">
-                <span className="arrow">→</span>
+              Study
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
+              >
+                →
               </span>
             </Link>
-          );
-        })}
+          )}
+
+          {sourceLink && (
+            <a
+              href={sourceLink.href}
+              target="_blank"
+              rel="noreferrer"
+              className="relative inline-flex size-6 items-center justify-center rounded-full before:absolute before:-inset-2.5 before:content-[''] border border-white/15 bg-white/5 text-xs text-white/70 transition-colors duration-200 hover:border-white/30 hover:bg-white/15 hover:text-white"
+              aria-label={`View ${project.shortTitle} source code on GitHub`}
+              title="GitHub source"
+            >
+              ↗
+            </a>
+          )}
+        </div>
       </div>
     </m.article>
   );

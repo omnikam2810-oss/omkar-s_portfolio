@@ -6,20 +6,55 @@ import { COMPACT_CHIP, PlateBase, STAGES } from "./stages";
 
 // The gaps between plates shrink a little on narrower screens, so all four plates always fit.
 const COLS =
-  "grid-cols-[1fr_clamp(40px,5vw,84px)_1fr_clamp(40px,5vw,84px)_1fr_clamp(40px,5vw,84px)_1fr]";
+  "grid-cols-[1fr_clamp(32px,4vw,64px)_1fr_clamp(32px,4vw,64px)_1fr_clamp(32px,4vw,64px)_1fr]";
 
-/** Bracketed rail between two plates, with a dot hopping along it. */
-function Connector({ delay }: { delay: string }) {
+/**
+ * Progressive connector rail between two stages.
+ * Starts neutral; progressively fills with teal as stages become active or are completed.
+ */
+function ProgressiveConnector({
+  index,
+  active,
+}: {
+  index: number;
+  active: number;
+}) {
+  const isCompleted = active > index;
+  const isCurrent = active === index;
+
   return (
-    <div aria-hidden="true" className="flex flex-col items-center pt-10">
+    <div aria-hidden="true" className="flex flex-col items-center pt-[46px]">
       <div className="relative flex h-3 w-full items-center">
-        <span className="h-3 w-1 border border-line-6" />
-        <div className="flex-1 border-t border-line-6" />
-        <span className="h-3 w-1 border border-line-6" />
+        {/* Left endpoint pin */}
         <span
-          className="hop absolute left-2 size-1.5 rounded-full bg-accent-2"
-          style={{ animationDelay: delay }}
+          className={`h-2 w-[2px] rounded-full transition-colors duration-500 ${
+            isCompleted || isCurrent ? "bg-accent" : "bg-line-strong"
+          }`}
         />
+        {/* Base neutral track */}
+        <div className="relative h-[2px] flex-1 overflow-hidden bg-line">
+          {/* Animated teal progress fill */}
+          <div
+            className="absolute inset-y-0 left-0 bg-accent transition-all duration-700 ease-brand"
+            style={{
+              width: isCompleted ? "100%" : isCurrent ? "50%" : "0%",
+              opacity: isCompleted || isCurrent ? 1 : 0,
+            }}
+          />
+        </div>
+        {/* Right endpoint pin */}
+        <span
+          className={`h-2 w-[2px] rounded-full transition-colors duration-500 ${
+            isCompleted ? "bg-accent" : "bg-line-strong"
+          }`}
+        />
+        {/* Subtle travelling hop packet when active */}
+        {isCurrent && (
+          <span
+            className="hop absolute size-1.5 rounded-full bg-accent-2 shadow-[0_0_8px_rgba(20,145,138,0.6)]"
+            style={{ animationDuration: "1.6s" }}
+          />
+        )}
       </div>
     </div>
   );
@@ -31,15 +66,14 @@ export function ProcessSteps() {
     STAGES.length,
     2600,
   );
-  // Once the visitor has hovered, focused or clicked a plate they know it's interactive, so the hint goes.
   const [touched, setTouched] = useState(false);
   const touch = () => setTouched(true);
 
   return (
-    <div ref={ref} className="mt-8 md:mt-10">
+    <div ref={ref} className="mt-4 md:mt-5">
       {/* ---------- desktop: plates row + detail card under the active one ---------- */}
       <div
-        className="hidden flex-col gap-2 xl:flex"
+        className="hidden flex-col gap-1 xl:flex"
         onMouseLeave={leave}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && leave()}
       >
@@ -54,18 +88,22 @@ export function ProcessSteps() {
 
         <p
           aria-hidden="true"
-          className={`m-0 flex items-center justify-center gap-2 font-mono text-label tracking-[0.16em] text-accent transition-opacity duration-500 ${touched ? "opacity-0" : "opacity-100"}`}
+          className={`m-0 mb-1 flex items-center justify-center gap-1.5 font-mono text-[11px] tracking-[0.16em] text-accent transition-opacity duration-500 ${
+            touched ? "opacity-0" : "opacity-100"
+          }`}
         >
-          HOVER OR CLICK ANY STEP TO READ IT
+          HOVER OR CLICK ANY STEP TO EXPLORE
           <span className="inline-block motion-safe:animate-bounce">↓</span>
         </p>
 
-        <div className={`grid ${COLS} items-start pt-2`}>
+        {/* 4 Isometric Diamond Stages with progressive connectors */}
+        <div className={`grid ${COLS} items-start`}>
           {STAGES.map((s, i) => {
             const on = i === active;
+            const isCompleted = active > i;
             return (
               <Fragment key={s.code}>
-                {i > 0 && <Connector delay={`${(i - 1) * 0.6}s`} />}
+                {i > 0 && <ProgressiveConnector index={i - 1} active={active} />}
                 <button
                   type="button"
                   aria-label={`Stage ${i + 1}: ${s.phase.charAt(0)}${s.phase.slice(1).toLowerCase()}`}
@@ -82,35 +120,58 @@ export function ProcessSteps() {
                     touch();
                     pick(i);
                   }}
-                  // Plates that aren't selected stay clearly visible (not greyed out) and lift on hover.
-                  className={`flex cursor-pointer flex-col items-center border-0 bg-transparent p-0 transition-[opacity,translate,scale] duration-[600ms,700ms,700ms] ease-[ease,var(--ease),var(--ease)] motion-reduce:transition-none ${
+                  className={`group relative flex cursor-pointer flex-col items-center border-0 bg-transparent p-0 transition-[opacity,translate,scale] duration-400 ease-brand motion-reduce:transition-none ${
                     on
-                      ? "-translate-y-3 scale-[1.04] opacity-100"
+                      ? "-translate-y-2 scale-[1.02] opacity-100"
                       : "opacity-70 hover:-translate-y-1 hover:opacity-100"
                   }`}
                 >
                   <svg
-                    width="260"
-                    height="116"
+                    width="240"
+                    height="108"
                     viewBox="0 0 260 116"
                     aria-hidden="true"
-                    className="h-auto w-full max-w-[260px] overflow-visible"
+                    className="h-auto w-full max-w-[240px] overflow-visible"
                   >
                     <PlateBase on={on} />
-                    {s.art}
+                    {s.art(on)}
                   </svg>
-                  <div className="mt-1 h-[18px] w-px bg-accent-2" />
-                  <span className="size-[5px] rounded-full bg-accent-2" />
-                  <div className="mt-2.5 font-mono text-label tracking-[0.2em] text-muted-2">
+
+                  {/* Vertical stem connector with progressive status dot */}
+                  <div
+                    className={`mt-1 h-[12px] w-[2px] rounded-full transition-colors duration-500 ${
+                      isCompleted || on ? "bg-accent" : "bg-line-strong"
+                    }`}
+                  />
+                  <div className="relative flex items-center justify-center">
+                    {on && (
+                      <span className="absolute size-3 rounded-full bg-accent/25 animate-ping motion-reduce:hidden" />
+                    )}
+                    <span
+                      className={`relative rounded-full transition-all duration-500 ${
+                        on
+                          ? "size-2 bg-accent shadow-[0_0_8px_var(--accent)]"
+                          : isCompleted
+                            ? "size-1.5 bg-accent"
+                            : "size-1.5 bg-line-strong"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="mt-1.5 font-mono text-[10.5px] tracking-[0.18em] text-muted-2">
                     {s.code} · {s.phase}
                   </div>
-                  <div className="mt-[3px] font-display text-copy leading-snug font-semibold text-ink">
+                  <div className="mt-0.5 font-display text-[15px] leading-snug font-semibold text-ink">
                     {s.title}
                   </div>
-                  <div className="mt-[3px] font-mono text-label text-muted-2">
+                  <div className="mt-0.5 font-mono text-[11px] text-muted-2">
                     {s.sub}
                   </div>
-                  <div className="mt-2 font-mono text-label tracking-[0.12em] text-accent">
+                  <div
+                    className={`mt-1 font-mono text-[10.5px] tracking-[0.12em] transition-colors duration-300 ${
+                      on ? "text-accent font-medium" : "text-muted-2 group-hover:text-accent"
+                    }`}
+                  >
                     {on ? "DETAILS BELOW ↓" : "VIEW DETAILS"}
                   </div>
                 </button>
@@ -119,7 +180,8 @@ export function ProcessSteps() {
           })}
         </div>
 
-        <div className={`grid ${COLS} h-[250px]`}>
+        {/* Floating Detail Card: compact & fits within single viewport */}
+        <div className={`grid ${COLS} min-h-[175px] mt-2`}>
           {STAGES.map((s, i) => (
             <Fragment key={s.code}>
               {i > 0 && <div />}
@@ -127,30 +189,48 @@ export function ProcessSteps() {
                 {i === active && (
                   <div
                     id={`process-card-${i}`}
-                    className="rise box-border flex h-fit w-[290px] flex-col gap-2.5 rounded-[14px] border border-line bg-surface px-5 py-[18px] shadow-(--pop-shadow)"
+                    className="rise box-border flex h-fit w-[300px] flex-col gap-2 rounded-[14px] border border-line bg-surface p-4 shadow-(--pop-shadow) transition-all duration-300"
                   >
-                    <div className="flex justify-between font-mono text-label tracking-[0.18em] text-muted-2">
-                      <span>
+                    {/* Header: Stage code & step counter */}
+                    <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.16em]">
+                      <span className="flex items-center gap-1.5 text-accent font-medium uppercase">
+                        <span className="size-1.5 rounded-full bg-accent" />
                         {s.code} · {s.phase}
                       </span>
-                      <span>
-                        {i + 1} / {STAGES.length}
+                      <span className="text-muted-2">
+                        0{i + 1} / 0{STAGES.length}
                       </span>
                     </div>
-                    <div className="font-display text-copy leading-snug font-semibold text-ink">
+
+                    {/* Stage Title */}
+                    <div className="font-display text-[15px] leading-snug font-semibold text-ink">
                       {s.card.title}
                     </div>
-                    <p className="text-small leading-[1.65] text-body-2">
+
+                    {/* Description */}
+                    <p className="m-0 text-[12.5px] leading-[1.55] text-body-2">
                       {s.card.desc}
                     </p>
-                    <dl className="m-0 flex flex-col gap-[5px] border-t border-line-inner pt-2 font-mono text-label text-muted">
-                      {s.card.meta.map(([k, v]) => (
-                        <div key={k} className="flex justify-between">
-                          <dt>{k}</dt>
-                          <dd className="m-0 text-ink">{v}</dd>
-                        </div>
-                      ))}
-                    </dl>
+
+                    {/* Structured Deliverables & Core Rule */}
+                    <div className="mt-0.5 flex flex-col gap-1 border-t border-line-inner pt-2 font-mono text-[11px]">
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-[10px] tracking-[0.12em] text-accent uppercase font-medium">
+                          Deliverable
+                        </span>
+                        <span className="text-ink truncate max-w-[190px]">
+                          {s.card.output}
+                        </span>
+                      </div>
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-[10px] tracking-[0.12em] text-muted-2 uppercase font-medium">
+                          Core Rule
+                        </span>
+                        <span className="text-muted truncate max-w-[190px]">
+                          {s.card.rule}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -159,16 +239,52 @@ export function ProcessSteps() {
         </div>
       </div>
 
-      {/* ---------- below xl: one card per stage, tap to expand ---------- */}
+      {/* ---------- below xl: responsive cards with tap interactions ---------- */}
       <div className="flex flex-col gap-3 xl:hidden">
+        {/* Mobile Progressive Progress Bar */}
+        <div className="mb-1 flex items-center justify-between gap-2 rounded-[12px] border border-line bg-surface px-4 py-2 font-mono text-label">
+          {STAGES.map((s, idx) => {
+            const isCompleted = active > idx;
+            const isCurrent = active === idx;
+            return (
+              <button
+                key={s.code}
+                type="button"
+                onClick={() => {
+                  touch();
+                  pick(idx);
+                }}
+                className={`flex min-h-11 flex-1 cursor-pointer items-center gap-1.5 transition-colors duration-300 ${
+                  isCurrent
+                    ? "text-accent font-semibold"
+                    : isCompleted
+                      ? "text-ink"
+                      : "text-muted-2"
+                }`}
+              >
+                <span
+                  className={`size-2 rounded-full transition-colors duration-300 ${
+                    isCurrent || isCompleted ? "bg-accent" : "bg-line-strong"
+                  }`}
+                />
+                <span className="truncate">{s.phase}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <p
           aria-hidden="true"
-          className={`m-0 font-mono text-label tracking-[0.14em] text-accent transition-opacity duration-500 ${touched ? "opacity-0" : "opacity-100"}`}
+          className={`m-0 font-mono text-label tracking-[0.14em] text-accent transition-opacity duration-500 ${
+            touched ? "opacity-0" : "opacity-100"
+          }`}
         >
-          TAP ANY STEP TO READ IT ↓
+          TAP ANY STEP TO EXPLORE ↓
         </p>
+
         {STAGES.map((s, i) => {
           const on = i === active;
+          const isCompleted = active > i;
           return (
             <button
               key={s.code}
@@ -178,19 +294,21 @@ export function ProcessSteps() {
                 touch();
                 pick(i);
               }}
-              className={`flex cursor-pointer flex-col gap-2.5 rounded-[18px] border bg-surface px-4 py-3.5 text-left text-[inherit] transition-[border-color,box-shadow] duration-400 ${
+              className={`flex cursor-pointer flex-col gap-2.5 rounded-[16px] border bg-surface p-3.5 text-left text-[inherit] transition-[border-color,box-shadow] duration-300 ${
                 on
-                  ? "border-pl-on-border shadow-[0_12px_30px_rgba(74,56,48,0.08)]"
-                  : "border-line"
+                  ? "border-accent/40 shadow-(--pop-shadow) ring-1 ring-accent/20"
+                  : "border-line hover:border-card-line-hover"
               }`}
             >
-              <span className="flex items-center gap-3.5">
+              <div className="flex items-center gap-3">
                 <svg
-                  width="84"
-                  height="38"
+                  width="80"
+                  height="36"
                   viewBox="0 0 260 116"
                   aria-hidden="true"
-                  className={`shrink-0 overflow-visible transition-opacity duration-500 ${on ? "opacity-100" : "opacity-50"}`}
+                  className={`shrink-0 overflow-visible transition-opacity duration-500 ${
+                    on ? "opacity-100" : "opacity-60"
+                  }`}
                 >
                   <PlateBase on={on} compact />
                   <polygon
@@ -199,33 +317,60 @@ export function ProcessSteps() {
                     className="fill-(--sd-ai-chip) stroke-accent-2"
                   />
                 </svg>
-                <span className="flex-1">
-                  <span className="block font-mono text-label tracking-[0.16em] text-muted-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 font-mono text-label tracking-[0.16em] text-muted-2">
+                    <span
+                      className={`size-1.5 rounded-full ${
+                        on || isCompleted ? "bg-accent" : "bg-line-strong"
+                      }`}
+                    />
                     {s.code.slice(1)} · {s.phase}
-                  </span>
-                  <span className="block font-display text-xl font-semibold text-ink">
+                  </div>
+                  <div className="mt-0.5 truncate font-display text-[16px] font-semibold text-ink">
                     {s.phone.title}
-                  </span>
+                  </div>
                   {!on && (
-                    <span className="mt-0.5 block font-mono text-label tracking-[0.12em] text-accent">
+                    <div className="mt-0.5 font-mono text-[11px] tracking-[0.12em] text-accent">
                       TAP TO READ
-                    </span>
+                    </div>
                   )}
-                </span>
+                </div>
                 <span
                   aria-hidden="true"
-                  className={`text-lg transition-transform duration-400 motion-reduce:transition-none ${on ? "rotate-90 text-accent" : "text-ach-num"}`}
+                  className={`text-lg transition-transform duration-300 motion-reduce:transition-none ${
+                    on ? "rotate-90 text-accent" : "text-muted-2"
+                  }`}
                 >
                   ›
                 </span>
-              </span>
+              </div>
+
+              {/* Expanded detail card on mobile */}
               {on && (
-                <span
-                  className="rise block text-small leading-[1.65] text-body"
-                  style={{ animationDuration: "0.5s" }}
+                <div
+                  className="rise mt-0.5 flex flex-col gap-2 border-t border-line-inner pt-2.5 text-small leading-[1.6] text-body"
+                  style={{ animationDuration: "0.35s" }}
                 >
-                  {s.phone.desc}
-                </span>
+                  <p className="m-0 text-body-2 text-[13px]">{s.phone.desc}</p>
+
+                  <div className="flex items-baseline justify-between pt-1 font-mono text-[11px]">
+                    <span className="text-[10px] tracking-[0.12em] text-accent uppercase font-medium">
+                      Deliverable
+                    </span>
+                    <span className="text-ink truncate max-w-[200px]">
+                      {s.phone.output}
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between font-mono text-[11px]">
+                    <span className="text-[10px] tracking-[0.12em] text-muted-2 uppercase font-medium">
+                      Core Rule
+                    </span>
+                    <span className="text-muted truncate max-w-[200px]">
+                      {s.phone.rule}
+                    </span>
+                  </div>
+                </div>
               )}
             </button>
           );
