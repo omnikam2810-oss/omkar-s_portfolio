@@ -29,8 +29,8 @@ export const PHOTOS: Record<
   }
 > = {
   workspace: {
-    src: "/about/portrait-blue.jpg",
-    alt: "Portrait of Omkar in a dark collared shirt against a blue technology-themed background",
+    src: "/about/omkar.jpg",
+    alt: "Portrait of Omkar wearing a black collared shirt",
     label: "workspace",
     // a square photo in a tall frame: keep the face centred
     position: "50% 30%",
